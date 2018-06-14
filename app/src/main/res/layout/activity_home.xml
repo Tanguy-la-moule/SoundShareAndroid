@@ -30,7 +30,8 @@
         android:background="@drawable/round_button"
         app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_group_white" />
+        app:srcCompat="@drawable/ic_group_white"
+        tools:ignore="VectorDrawableCompat" />
 
     <ImageButton
         android:id="@+id/imageButton3"
@@ -42,5 +43,6 @@
         android:background="@drawable/round_button"
         app:layout_constraintEnd_toStartOf="@+id/imageButton2"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_library_music" />
+        app:srcCompat="@drawable/ic_library_music"
+        tools:ignore="VectorDrawableCompat" />
 </android.support.constraint.ConstraintLayout>

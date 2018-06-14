@@ -18,7 +18,8 @@
         android:onClick="backHome"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+        tools:ignore="VectorDrawableCompat" />
 
     <EditText
         android:id="@+id/editText6"
@@ -30,7 +31,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:ems="10"
-        android:hint="@string/username"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -16,6 +16,11 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
     }
 
+    @Override
+    public void onBackPressed(){
+        Boolean disableButton =  true;
+    }
+
     public void logOut(View view){
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();

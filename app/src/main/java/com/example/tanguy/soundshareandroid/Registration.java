@@ -16,6 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class Registration extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -53,6 +56,7 @@ public class Registration extends AppCompatActivity {
         final View currentView = view;
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (email.length() > 0 && password.length() > 0) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
