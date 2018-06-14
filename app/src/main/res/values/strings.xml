@@ -6,4 +6,5 @@
     <string name="username">Email</string>
     <string name="password">Password</string>
     <string name="register_button">Register</string>
+    <string name="log_out">Log out</string>
 </resources>

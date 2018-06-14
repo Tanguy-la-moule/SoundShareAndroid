@@ -1,12 +1,15 @@
 package com.example.tanguy.soundshareandroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -47,33 +50,32 @@ public class Connection extends AppCompatActivity {
         EditText editPassword = (EditText) findViewById(R.id.editText7);
         String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
-        final View v = view;
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show();
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Snackbar.make(v, "Connection reussie", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show();
 
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            String merdier = "merdier";
-                            Snackbar.make(v, "Connection ratée", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        final Intent intent = new Intent(this, Home.class);
+        final View currentView = view;
+
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+        if(email.length() > 0 && password.length() > 0){
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("CONNECTION", "logged in successfully");
+                                Snackbar.make(currentView, "Your inscription succeded", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                                startActivity(intent);
+                            } else {
+                                Log.w("CONNECTION", task.getException());
+                                Snackbar.make(currentView, "Try again ...", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            }
                         }
-
-                        // ...
-                    }
-                });
+                    });
+        }
     }
-
 }
-
-//Syntaxe snackbar
-//Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//        .setAction("Action", null).show();
