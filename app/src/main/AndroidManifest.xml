@@ -16,13 +16,14 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".Connection"
-                android:label="@string/title_activity_connection"
-                android:theme="@style/AppTheme.NoActionBar">
+            android:name=".Connection"
+            android:label="@string/title_activity_connection"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".Registration"></activity>
     </application>
 
 </manifest>
