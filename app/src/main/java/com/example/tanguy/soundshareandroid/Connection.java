@@ -45,7 +45,7 @@ public class Connection extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void signUp(View view) {
+    public void signIn(View view) {
         EditText editEmail = (EditText) findViewById(R.id.editText6);
         EditText editPassword = (EditText) findViewById(R.id.editText7);
         String email = editEmail.getText().toString();

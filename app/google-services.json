@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "344428333198",
     "firebase_url": "https://soundshareandroid.firebaseio.com",
-    "project_id": "com.example.tanguy.soundshareandroid",
+    "project_id": "soundshareandroid",
     "storage_bucket": "soundshareandroid.appspot.com"
   },
   "client": [

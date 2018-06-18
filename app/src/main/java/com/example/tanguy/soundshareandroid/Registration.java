@@ -55,7 +55,7 @@ public class Registration extends AppCompatActivity {
         EditText editEmail = (EditText) findViewById(R.id.editText6);
         EditText editPassword = (EditText) findViewById(R.id.editText7);
         EditText editUsername = (EditText) findViewById(R.id.editText);
-        String email = editEmail.getText().toString();
+        final String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
         final String username = editUsername.getText().toString();
 
@@ -65,7 +65,7 @@ public class Registration extends AppCompatActivity {
         final Intent intent = new Intent(this, Home.class);
         final View currentView = view;
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         if (email.length() > 0 && password.length() > 0) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -74,14 +74,17 @@ public class Registration extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Log.d("REGISTRATION", "registered auth user successfully");
+
+                                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+                                FirebaseFirestore.setLoggingEnabled(true);
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                                 // Create a new user with a first and last name
                                 Map<String, Object> user = new HashMap<>();
-                                user.put("first", "Ada");
-                                user.put("last", "Lovelace");
-                                user.put("born", 1815);
-                                Log.d("DATABASE", "database user created");
+                                user.put("id", currentUser.getUid());
+                                user.put("email", email);
+                                user.put("username", username);
                                 // Add a new document with a generated ID
                                 db.collection("users")
                                         .add(user)
@@ -89,6 +92,7 @@ public class Registration extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d("DATABASE", "database user registered");
+                                                startActivity(intent);
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {

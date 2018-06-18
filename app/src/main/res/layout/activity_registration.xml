@@ -78,7 +78,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_button"
-        android:onClick="signUp"
+        android:onClick="sendToConnection"
         android:text="@string/connection_button"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
