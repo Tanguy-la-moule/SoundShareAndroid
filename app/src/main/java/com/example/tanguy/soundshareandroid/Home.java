@@ -30,6 +30,7 @@ public class Home extends AppCompatActivity {
 
     public void goToStreamer(View view){
         Intent intent = new Intent(this, Streamer.class);
+        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/MC%20Fioti%20-%20Bum%20Bum%20Tam%20Tam%20(Felckin%20X%20Moontrackers%20Remix).mp3?alt=media&token=363c8fbd-2349-48dc-a892-056bfc1bb304");
         startActivity(intent);
     }
 }

@@ -26,10 +26,10 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".Registration" />
+        <activity android:name=".Home" />
         <activity
-            android:name=".Home"
-            android:screenOrientation="portrait" />
-        <activity android:name=".Streamer" />
+            android:name=".Streamer"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

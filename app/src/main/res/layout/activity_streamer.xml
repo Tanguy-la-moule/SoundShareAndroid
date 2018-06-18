@@ -21,7 +21,21 @@
 
     <ImageButton
         android:id="@+id/audioStreamBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_button"
+        android:onClick="goToHome"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageButton8"
+        app:srcCompat="@drawable/ic_play_arrow_white" />
+
+    <ImageButton
+        android:id="@+id/imageButton7"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
@@ -29,9 +43,27 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/round_button"
-        android:onClick="goToHome"
+        android:onClick="nextSong"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/audioStreamBtn"
+        app:srcCompat="@drawable/ic_skip_next" />
+
+    <ImageButton
+        android:id="@+id/imageButton8"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/round_button"
+        android:onClick="previousSong"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/audioStreamBtn"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_play_arrow_white" />
+        app:srcCompat="@drawable/ic_skip_previous" />
 </android.support.constraint.ConstraintLayout>

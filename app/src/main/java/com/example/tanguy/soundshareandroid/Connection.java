@@ -29,12 +29,6 @@ public class Connection extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-  /*  @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-    }*/
-
     public void backHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

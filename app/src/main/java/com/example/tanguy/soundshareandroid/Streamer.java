@@ -19,11 +19,17 @@ public class Streamer extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private ProgressDialog progressDialog;
     private boolean initialStage = true;
+    private String songId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_streamer);
+
+        Intent previousIntent = getIntent();
+        final String songId = previousIntent.getStringExtra("SONG");
+        Log.i("INTENT", songId);
+
         btn = (ImageButton) findViewById(R.id.audioStreamBtn);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -32,9 +38,9 @@ public class Streamer extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 if(!playPause){
-                    //btn.setText("Pause Streaming");
+                    btn.setImageResource(R.drawable.ic_pause_white);
                     if (initialStage){
-                        new Player().execute("https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/MC%20Fioti%20-%20Bum%20Bum%20Tam%20Tam%20(Felckin%20X%20Moontrackers%20Remix).mp3?alt=media&token=363c8fbd-2349-48dc-a892-056bfc1bb304");
+                        new Player().execute(songId);
                     } else {
                         if (!mediaPlayer.isPlaying()){
                             mediaPlayer.start();
@@ -42,7 +48,7 @@ public class Streamer extends AppCompatActivity {
                     }
                     playPause = true;
                 } else {
-                    //btn.setText("Lauching Streaming");
+                    btn.setImageResource(R.drawable.ic_play_arrow_white);
                     if (mediaPlayer.isPlaying()){
                         mediaPlayer.pause();
                     }
@@ -74,7 +80,7 @@ public class Streamer extends AppCompatActivity {
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         initialStage = true;
                         playPause = false;
-                        //btn.setText("Launch Streaming");
+                        btn.setImageResource(R.drawable.ic_play_arrow_white);
                         mediaPlayer.stop();
                         mediaPlayer.reset();
                     }
@@ -113,6 +119,17 @@ public class Streamer extends AppCompatActivity {
 
     public void goToHome(View view){
         Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
+    }
+
+    public void nextSong(View view){
+        Intent intent = new Intent(this, Streamer.class);
+        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/Biffty%20-%20Roule%20un%20boze%20(Remix%20Dj%20Weedim).mp3?alt=media&token=c98f5532-1047-49e3-a55b-f418e39c2732");
+        startActivity(intent);
+    }
+    public void previousSong(View view){
+        Intent intent = new Intent(this, Streamer.class);
+        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/Suicide%20Social%20%5BVID%C3%89O%20OFFICIELLE%5D.mp3?alt=media&token=fc09ee22-5154-4d09-95d6-ecb6d40df43a");
         startActivity(intent);
     }
 }
