@@ -13,12 +13,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Registration extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -43,11 +51,13 @@ public class Registration extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void signIn(View view) {
+    public void signUp(View view) {
         EditText editEmail = (EditText) findViewById(R.id.editText6);
         EditText editPassword = (EditText) findViewById(R.id.editText7);
+        EditText editUsername = (EditText) findViewById(R.id.editText);
         String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
+        final String username = editUsername.getText().toString();
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -56,7 +66,6 @@ public class Registration extends AppCompatActivity {
         final View currentView = view;
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (email.length() > 0 && password.length() > 0) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -64,10 +73,30 @@ public class Registration extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Log.d("REGISTRATION", "created user successfully");
-                                Snackbar.make(currentView, "Your inscription succeded", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
-                                startActivity(intent);
+                                Log.d("REGISTRATION", "registered auth user successfully");
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                // Create a new user with a first and last name
+                                Map<String, Object> user = new HashMap<>();
+                                user.put("first", "Ada");
+                                user.put("last", "Lovelace");
+                                user.put("born", 1815);
+                                Log.d("DATABASE", "database user created");
+                                // Add a new document with a generated ID
+                                db.collection("users")
+                                        .add(user)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d("DATABASE", "database user registered");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("TAG", "Je pue la merde", e);
+                                            }
+                                        });
                             } else {
                                 Log.w("REGISTRATION", task.getException());
                                 Snackbar.make(currentView, "Your inscription failed", Snackbar.LENGTH_LONG)
@@ -76,5 +105,38 @@ public class Registration extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    public void AddUser(String username, final Intent intent){
+
+
+        /*Map<String, Object> user = new HashMap<>();
+
+        if(!(user == null)) {
+            user.put("user_id", currentUser.getUid());
+            user.put("email", currentUser.getEmail());
+            user.put("username", username);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            Log.d("DATABASE", "merdier");
+            db.collection("users")
+                    .add(user)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("DATABASE", "Document added with id :");
+                            startActivity(intent);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("DATABASE", "Error adding document", e.getCause());
+                        }
+                    });
+        } else {
+            Log.d("DATABASE", "no user");
+        }*/
     }
 }
