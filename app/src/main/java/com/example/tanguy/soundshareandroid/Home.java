@@ -28,11 +28,11 @@ public class Home extends AppCompatActivity {
     MyRecyclerViewAdapter adapter;
 
     private HashMap<String, SongInPlaylist> songs;
-    private ArrayList<String> songList;
+    private ArrayList<SongInPlaylist> songList;
 
     public Home() {
         songs = new HashMap<>();
-        songList = new ArrayList<String>();
+        songList = new ArrayList<SongInPlaylist>();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Home extends AppCompatActivity {
                             for(Map.Entry<String, SongInPlaylist> entry : songs.entrySet()) {
                                 SongInPlaylist valeur = entry.getValue();
 
-                                songList.add(valeur.getArtist());
+                                songList.add(valeur);
                             }
 
                             // set up the RecyclerView

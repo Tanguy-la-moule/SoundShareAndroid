@@ -22,4 +22,12 @@ public class SongInPlaylist {
     public String getArtist(){
         return this.artist;
     }
+
+    public String getTitle(){
+        return this.title;
+    }
+
+    public String getStorageID(){
+        return this.storageID;
+    }
 }
