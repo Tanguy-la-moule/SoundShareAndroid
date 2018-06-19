@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,8 +33,8 @@ public class Home extends AppCompatActivity {
     private ArrayList<SongInPlaylist> songList;
 
     public Home() {
-        songs = new HashMap<>();
-        songList = new ArrayList<SongInPlaylist>();
+        this.songs = new HashMap<>();
+        this.songList = new ArrayList<SongInPlaylist>();
     }
 
     @Override
@@ -55,8 +57,9 @@ public class Home extends AppCompatActivity {
                                 String artist = (String) songJson.get("artist");
                                 String title = (String) songJson.get("title");
                                 String storageID = (String) songJson.get("storageID");
+                                String coverURL = (String) songJson.get("coverURL");
 
-                                SongInPlaylist song = new SongInPlaylist(artist, title, storageID);
+                                SongInPlaylist song = new SongInPlaylist(artist, title, storageID, coverURL);
                                 songs.put(ID, song);
 
                             }
@@ -73,7 +76,13 @@ public class Home extends AppCompatActivity {
                             RecyclerView recyclerView = findViewById(R.id.rvAnimals);
                             recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
                             adapter = new MyRecyclerViewAdapter(Home.this, songList);
-                            //adapter.setClickListener (this);
+                            adapter.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    SongInPlaylist song = songList.get(position);
+                                    goToStreamer(view, song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL());
+                                }
+                            });
                             recyclerView.setAdapter(adapter);
 
                         } else {
@@ -82,7 +91,6 @@ public class Home extends AppCompatActivity {
                     }
                 });
     }
-
     @Override
     public void onBackPressed(){
         Boolean disableButton =  true;
@@ -95,9 +103,12 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToStreamer(View view){
+    public void goToStreamer(View view, String title, String artist, String storageID, String coverURL){
         Intent intent = new Intent(this, Streamer.class);
-        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/Veerus%20-%20P%C3%A9riple.mp3?alt=media&token=c36271ce-6be2-4d42-8099-02dc6ca18414");
+        intent.putExtra("TITLE", title);
+        intent.putExtra("ARTIST", artist);
+        intent.putExtra("STORAGEID", storageID);
+        intent.putExtra("COVERURL", coverURL);
         startActivity(intent);
     }
 }

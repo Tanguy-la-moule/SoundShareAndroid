@@ -2,6 +2,8 @@ package com.example.tanguy.soundshareandroid;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -11,6 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Streamer extends AppCompatActivity {
 
@@ -18,8 +29,7 @@ public class Streamer extends AppCompatActivity {
     private boolean playPause;
     private MediaPlayer mediaPlayer;
     private ProgressDialog progressDialog;
-    private boolean initialStage = true;
-    private String songId;
+    private boolean initialStage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,21 +37,34 @@ public class Streamer extends AppCompatActivity {
         setContentView(R.layout.activity_streamer);
 
         Intent previousIntent = getIntent();
-        final String songId = previousIntent.getStringExtra("SONG");
-        Log.i("INTENT", songId);
+
+        TextView tvTitle = findViewById(R.id.tvTitle);
+        TextView tvArtist = findViewById(R.id.tvArtist);
+        ImageView ivCover = findViewById(R.id.ivAlbumCover);
+
+        String title = previousIntent.getStringExtra("TITLE");
+        String artist = previousIntent.getStringExtra("ARTIST");
+        final String storageID = previousIntent.getStringExtra("STORAGEID");
+        String coverURL = previousIntent.getStringExtra("COVERURL");
+
+        Picasso.with(this).load(coverURL).fit().into(ivCover);
+
+        tvTitle.setText(title);
+        tvArtist.setText(artist);
 
         btn = (ImageButton) findViewById(R.id.audioStreamBtn);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         progressDialog = new ProgressDialog(this);
+        new Player().execute(storageID);
+        btn.setImageResource(R.drawable.ic_pause_white);
         btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 if(!playPause){
                     btn.setImageResource(R.drawable.ic_pause_white);
                     if (initialStage){
-                        //new Player().execute(songId);
-                        new Player().execute(songId);
+                        new Player().execute(storageID);
                     } else {
                         if (!mediaPlayer.isPlaying()){
                             mediaPlayer.start();

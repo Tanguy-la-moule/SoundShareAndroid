@@ -4,15 +4,17 @@ public class SongInPlaylist {
     private String artist;
     private String title;
     private String storageID;
+    private String coverURL;
     private int skippedEarly;
     private int skippedLate;
     private int notSkipped;
     private float score;
 
-    public SongInPlaylist(String artist, String title, String storageID){
+    public SongInPlaylist(String artist, String title, String storageID, String coverURL){
         this.artist = artist;
         this.title = title;
         this.storageID = storageID;
+        this.coverURL = coverURL;
         this.skippedEarly = 0;
         this.skippedLate = 0;
         this.notSkipped = 1;
@@ -29,5 +31,9 @@ public class SongInPlaylist {
 
     public String getStorageID(){
         return this.storageID;
+    }
+
+    public String getCoverURL(){
+        return this.coverURL;
     }
 }
