@@ -17,26 +17,28 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class Home extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     MyRecyclerViewAdapter adapter;
 
+    private HashMap<String, SongInPlaylist> songs;
+    private ArrayList<String> songList;
+
+    public Home() {
+        songs = new HashMap<>();
+        songList = new ArrayList<String>();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        ArrayList<String> songList = new ArrayList<>();
-
-        songList.add("poudlard");
-        // set up the RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.rvAnimals);
-        recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-        adapter = new MyRecyclerViewAdapter(Home.this, songList);
-        //adapter.setClickListener (this);
-        recyclerView.setAdapter(adapter);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -46,19 +48,40 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("TESTFIRESTORE", document.getId() + " => " + document.getData());
+                                Map<String, Object> songJson = document.getData();
+                                String ID = document.getId();
+                                String artist = (String) songJson.get("artist");
+                                String title = (String) songJson.get("title");
+                                String storageID = (String) songJson.get("storageID");
+
+                                SongInPlaylist song = new SongInPlaylist(artist, title, storageID);
+                                songs.put(ID, song);
+
                             }
 
                             Log.d("SONG REQUEST", "playlist pulled successfully");
 
+                            for(Map.Entry<String, SongInPlaylist> entry : songs.entrySet()) {
+                                SongInPlaylist valeur = entry.getValue();
+
+                                songList.add(valeur.getArtist());
+                            }
+
+                            // set up the RecyclerView
+                            RecyclerView recyclerView = findViewById(R.id.rvAnimals);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
+                            adapter = new MyRecyclerViewAdapter(Home.this, songList);
+                            //adapter.setClickListener (this);
+                            recyclerView.setAdapter(adapter);
 
                         } else {
                             Log.w("SONG REQUEST", "Error getting documents.", task.getException());
                         }
                     }
                 });
-        }
+    }
 
     @Override
     public void onBackPressed(){
@@ -74,7 +97,7 @@ public class Home extends AppCompatActivity {
 
     public void goToStreamer(View view){
         Intent intent = new Intent(this, Streamer.class);
-        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/MC%20Fioti%20-%20Bum%20Bum%20Tam%20Tam%20(Felckin%20X%20Moontrackers%20Remix).mp3?alt=media&token=363c8fbd-2349-48dc-a892-056bfc1bb304");
+        intent.putExtra("SONG", "https://firebasestorage.googleapis.com/v0/b/soundshareandroid.appspot.com/o/Veerus%20-%20P%C3%A9riple.mp3?alt=media&token=c36271ce-6be2-4d42-8099-02dc6ca18414");
         startActivity(intent);
     }
 }

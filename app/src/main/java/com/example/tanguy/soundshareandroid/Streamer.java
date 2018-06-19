@@ -40,6 +40,7 @@ public class Streamer extends AppCompatActivity {
                 if(!playPause){
                     btn.setImageResource(R.drawable.ic_pause_white);
                     if (initialStage){
+                        //new Player().execute(songId);
                         new Player().execute(songId);
                     } else {
                         if (!mediaPlayer.isPlaying()){
