@@ -47,7 +47,7 @@ public class Streamer extends AppCompatActivity {
         final String storageID = previousIntent.getStringExtra("STORAGEID");
         String coverURL = previousIntent.getStringExtra("COVERURL");
 
-        Picasso.with(this).load(coverURL).fit().into(ivCover);
+        Picasso.with(this).load(coverURL).resize(650, 650).into(ivCover);
 
         tvTitle.setText(title);
         tvArtist.setText(artist);
