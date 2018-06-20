@@ -28,13 +28,13 @@
         android:background="@drawable/round_button"
         android:onClick="goToHome"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton7"
+        app:layout_constraintEnd_toStartOf="@+id/ibNextSong"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageButton8"
         app:srcCompat="@drawable/ic_play_arrow_white" />
 
     <ImageButton
-        android:id="@+id/imageButton7"
+        android:id="@+id/ibNextSong"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -43,7 +43,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/round_button"
-        android:onClick="nextSong"
+        android:onClick="lookForNextSong"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -60,7 +60,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/round_button"
-        android:onClick="previousSong"
+        android:onClick="resetSong"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/audioStreamBtn"
         app:layout_constraintHorizontal_bias="0.5"
@@ -79,7 +79,7 @@
         android:text="TextView"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/audioStreamBtn"
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -103,7 +103,7 @@
         android:id="@+id/ivAlbumCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -113,4 +113,38 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/logo_miniature" />
+
+    <TextView
+        android:id="@+id/tvCurrentPosition"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="right"
+        android:text="0:00"
+        app:layout_constraintBottom_toTopOf="@+id/imageButton8"
+        app:layout_constraintEnd_toStartOf="@+id/textView6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="/"
+        app:layout_constraintBottom_toTopOf="@+id/audioStreamBtn"
+        app:layout_constraintEnd_toStartOf="@+id/tvDuration"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentPosition" />
+
+    <TextView
+        android:id="@+id/tvDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="3:56"
+        app:layout_constraintBottom_toTopOf="@+id/ibNextSong"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView6" />
 </android.support.constraint.ConstraintLayout>

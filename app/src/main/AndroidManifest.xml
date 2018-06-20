@@ -29,7 +29,8 @@
         <activity android:name=".Home" />
         <activity
             android:name=".Streamer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity android:name=".PlaylistDisplay"></activity>
     </application>
 
 </manifest>

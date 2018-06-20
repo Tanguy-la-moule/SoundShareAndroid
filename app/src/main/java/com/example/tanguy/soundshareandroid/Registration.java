@@ -83,11 +83,11 @@ public class Registration extends AppCompatActivity {
                                 user.put("email", email);
                                 user.put("username", username);
                                 // Add a new document with a generated ID
-                                db.collection("users")
-                                        .add(user)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                db.collection("users").document(currentUser.getUid())
+                                        .set(user)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
-                                            public void onSuccess(DocumentReference documentReference) {
+                                            public void onSuccess(Void aVoid) {
                                                 Log.d("DATABASE", "database user registered");
                                                 startActivity(intent);
                                             }
@@ -95,7 +95,7 @@ public class Registration extends AppCompatActivity {
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w("TAG", "Je pue la merde", e);
+                                                Log.w("REGISTRATION", "erreur"+ e.getMessage());
                                             }
                                         });
                             } else {

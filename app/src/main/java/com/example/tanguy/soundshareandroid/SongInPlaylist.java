@@ -1,6 +1,7 @@
 package com.example.tanguy.soundshareandroid;
 
 public class SongInPlaylist {
+    private String songID;
     private String artist;
     private String title;
     private String storageID;
@@ -10,7 +11,8 @@ public class SongInPlaylist {
     private int notSkipped;
     private float score;
 
-    public SongInPlaylist(String artist, String title, String storageID, String coverURL){
+    public SongInPlaylist(String songID, String artist, String title, String storageID, String coverURL){
+        this.songID = songID;
         this.artist = artist;
         this.title = title;
         this.storageID = storageID;
@@ -19,6 +21,10 @@ public class SongInPlaylist {
         this.skippedLate = 0;
         this.notSkipped = 1;
         this.score = 1;
+    }
+
+    public String getSongID(){
+        return this.songID;
     }
 
     public String getArtist(){
