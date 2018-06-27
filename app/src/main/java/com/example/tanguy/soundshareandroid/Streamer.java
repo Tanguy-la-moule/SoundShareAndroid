@@ -1,6 +1,10 @@
 package com.example.tanguy.soundshareandroid;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +12,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,11 +43,6 @@ public class Streamer extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private ProgressDialog progressDialog;
     private boolean initialStage = false;
-    private ArrayList<SongInPlaylist> nextSongs;
-
-    public Streamer(){
-        this.nextSongs = new ArrayList<>();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class Streamer extends AppCompatActivity {
         TextView tvTitle = findViewById(R.id.tvTitle);
         TextView tvArtist = findViewById(R.id.tvArtist);
         ImageView ivCover = findViewById(R.id.ivAlbumCover);
+        TextView tvPlaylist = findViewById(R.id.tvPlaylist);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -59,11 +60,15 @@ public class Streamer extends AppCompatActivity {
         String artist = bundle.getString("ARTIST");
         final String storageID = bundle.getString("STORAGEID");
         String coverURL = bundle.getString("COVERURL");
+        String playlistName = bundle.getString("PLAYLISTNAME");
+
+        notificationCall(title, artist);
 
         Picasso.with(this).load(coverURL).resize(650, 650).into(ivCover);
 
         tvTitle.setText(title);
         tvArtist.setText(artist);
+        tvPlaylist.setText(playlistName);
 
         playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
 
@@ -146,10 +151,6 @@ public class Streamer extends AppCompatActivity {
         });
     }
 
-    public void lookForNextSong (View view){
-
-    }
-
     public void streamNextSong(View view, SongInPlaylist nextSong, ArrayList<String> orderedPlaylist, int lectureNb) {
         Intent intent = new Intent(this, Streamer.class);
         Bundle bundle = new Bundle();
@@ -174,7 +175,6 @@ public class Streamer extends AppCompatActivity {
     public void resetSong(View view){
         if (mediaPlayer != null){
             mediaPlayer.reset();
-            mediaPlayer.start();
         }
     }
 
@@ -210,6 +210,7 @@ public class Streamer extends AppCompatActivity {
             return prepared;
         }
 
+
         @Override
         protected void onPostExecute(Boolean aBoolean){
             super.onPostExecute(aBoolean);
@@ -231,8 +232,66 @@ public class Streamer extends AppCompatActivity {
         }
     }
 
-    public void goToHome(View view){
-        Intent intent = new Intent(this, Home.class);
+    @Override
+    public void onBackPressed(){
+        if (mediaPlayer != null){
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        super.onBackPressed();
+
+    }
+
+
+    public void goToPlaylistDisplay(View view){
+        if (mediaPlayer != null){
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        Bundle previousBundle = getIntent().getExtras();
+
+        String playlistName = previousBundle.getString("PLAYLISTNAME");
+        ArrayList<String> orderedPlaylist = previousBundle.getStringArrayList("SONGSID");
+
+        cancelNotification(getBaseContext());
+
+        Intent intent = new Intent(this, PlaylistDisplay.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("NAME", playlistName);
+        bundle.putStringArrayList("SONGSID", orderedPlaylist);
+        intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    public void notificationCall(String title, String artist){
+        NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.logo_miniature)
+                .setContentTitle(title)
+                .setContentText(artist)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setVibrate(new long[]{0L}); // Passing null here silently fails
+
+        /*Intent intent = new Intent(this, Home.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
+        notificationBuilder.setContentIntent(pendingIntent);*/
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notificationBuilder.build());
+
+
+    }
+
+    public static void cancelNotification(Context context) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(ns);
+        notificationManager.cancel(1);
     }
 }

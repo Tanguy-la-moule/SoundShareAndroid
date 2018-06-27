@@ -74,18 +74,19 @@ public class Home extends AppCompatActivity {
 
                                     Playlist playlist = new Playlist(ID, name, songsID, lastSongs);
                                     playlistList.add(playlist);
+
+                                    Log.e("ERROR", name);
+
                                 }
 
-                                Log.d("PLAYLIST REQUEST", "playlists pulled successfully");
-
-                                RecyclerView recyclerView = findViewById(R.id.rvAnimals);
+                                RecyclerView recyclerView = findViewById(R.id.rvPlaylist);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
                                 adapter = new PlaylistAdapter(Home.this, playlistList);
                                 adapter.setClickListener(new PlaylistAdapter.ItemClickListener() {
                                     @Override
                                     public void onItemClick(View view, int position) {
                                         Playlist playlist = playlistList.get(position);
-                                        goToPlaylistDisplay(view, playlist.getID(), playlist.getName(), playlist.getSongsID());
+                                        goToPlaylistDisplay(view, playlist.getName(), playlist.getSongsID());
                                     }
                                 });
 
@@ -100,59 +101,9 @@ public class Home extends AppCompatActivity {
                             }
                         }
                     });
-
         }
-
-
-
-
-        /*db.collection("songs")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> songJson = document.getData();
-                                String ID = document.getId();
-                                String artist = (String) songJson.get("artist");
-                                String title = (String) songJson.get("title");
-                                String storageID = (String) songJson.get("storageID");
-                                String coverURL = (String) songJson.get("coverURL");
-
-                                SongInPlaylist song = new SongInPlaylist(ID, artist, title, storageID, coverURL);
-                                songs.put(ID, song);
-
-                            }
-
-                            Log.d("SONG REQUEST", "playlist pulled successfully");
-
-                            for(Map.Entry<String, SongInPlaylist> entry : songs.entrySet()) {
-                                SongInPlaylist valeur = entry.getValue();
-
-                                songList.add(valeur);
-                            }
-
-                            // set up the RecyclerView
-                            RecyclerView recyclerView = findViewById(R.id.rvAnimals);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-                            adapter = new MyRecyclerViewAdapter(Home.this, songList);
-                            adapter.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    SongInPlaylist song = songList.get(position);
-                                    goToStreamer(view, song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL());
-                                }
-                            });
-                            recyclerView.setAdapter(adapter);
-
-                        } else {
-                            Log.w("SONG REQUEST", "Error getting documents.", task.getException());
-                        }
-                    }
-                });*/
     }
+
     @Override
     public void onBackPressed(){
         Boolean disableButton =  true;
@@ -165,10 +116,9 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToPlaylistDisplay(View view, String ID, String name, ArrayList<String> songsID){
+    public void goToPlaylistDisplay(View view, String name, ArrayList<String> songsID){
         Intent intent = new Intent(this, PlaylistDisplay.class);
         Bundle bundle = new Bundle();
-        bundle.putString("ID", ID);
         bundle.putString("NAME", name);
         bundle.putStringArrayList("SONGSID", songsID);
         intent.putExtras(bundle);

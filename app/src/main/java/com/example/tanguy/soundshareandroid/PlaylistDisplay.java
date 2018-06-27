@@ -44,8 +44,7 @@ public class PlaylistDisplay extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        String playlistID = bundle.getString("ID");
-        String playlistName = bundle.getString("NAME");
+        final String playlistName = bundle.getString("NAME");
         final ArrayList<String> playlistSongs = bundle.getStringArrayList("SONGSID");
 
         TextView tvTitle = findViewById(R.id.tvTitle);
@@ -89,7 +88,7 @@ public class PlaylistDisplay extends AppCompatActivity {
                                 @Override
                                 public void onItemClick(View view, int position) {
                                     SongInPlaylist song = songList.get(position);
-                                    goToStreamer(view, position, song.getSongID(), song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL(), convertSongToString(songList));
+                                    goToStreamer(view, position, playlistName, song.getSongID(), song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL(), convertSongToString(songList));
                                 }
                             });
                             recyclerView.setAdapter(adapter);
@@ -117,7 +116,7 @@ public class PlaylistDisplay extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToStreamer(View view, int position, String songID, String title, String artist, String storageID, String coverURL, ArrayList<String> playlistSongID){
+    public void goToStreamer(View view, int position, String playlistName, String songID, String title, String artist, String storageID, String coverURL, ArrayList<String> playlistSongID){
         Log.e("RANDOM", playlistSongID.toString());
 
         playlistSongID.remove(position);
@@ -135,6 +134,7 @@ public class PlaylistDisplay extends AppCompatActivity {
         Intent intent = new Intent(this, Streamer.class);
         Bundle bundle = new Bundle();
         bundle.putString("SONGID", songID);
+        bundle.putString("PLAYLISTNAME", playlistName);
         bundle.putString("TITLE", title);
         bundle.putString("ARTIST", artist);
         bundle.putString("STORAGEID", storageID);
