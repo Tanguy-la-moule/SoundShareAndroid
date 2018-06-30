@@ -1,9 +1,7 @@
 package com.example.tanguy.soundshareandroid;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +9,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
-    private List<SongInPlaylist> mData;
+    private List<Friend> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<SongInPlaylist> data) {
+    FriendAdapter(Context context, List<Friend> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -26,17 +24,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.recycler_friend_row, parent, false);
         return new ViewHolder(view);
     }
 
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String artist = mData.get(position).getArtist();
-        String title = mData.get(position).getTitle();
-        holder.myTextViewTitle.setText(title);
-        holder.myTextViewArtist.setText(artist);
+        String username = mData.get(position).getUsername();
+        holder.myTextViewUsername.setText(username);
     }
 
     // total number of rows
@@ -48,13 +44,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextViewTitle;
-        TextView myTextViewArtist;
+        TextView myTextViewUsername;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextViewTitle = itemView.findViewById(R.id.tvTitle);
-            myTextViewArtist = itemView.findViewById(R.id.tvArtist);
+            myTextViewUsername = itemView.findViewById(R.id.tvUsername);
             itemView.setOnClickListener(this);
         }
 
@@ -77,4 +71,3 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
 }
-

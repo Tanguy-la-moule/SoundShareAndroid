@@ -30,13 +30,9 @@ public class Home extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     PlaylistAdapter adapter;
 
-    //private HashMap<String, SongInPlaylist> songs;
-    //private ArrayList<SongInPlaylist> songList;
     private ArrayList<Playlist> playlistList;
 
     public Home() {
-        //this.songs = new HashMap<>();
-        //this.songList = new ArrayList<SongInPlaylist>();
         this.playlistList = new ArrayList<Playlist>();
     }
 
@@ -119,6 +115,11 @@ public class Home extends AppCompatActivity {
         bundle.putString("NAME", name);
         bundle.putStringArrayList("SONGSID", songsID);
         intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    public void goToFriendManagement(View view){
+        Intent intent = new Intent(this, FriendManagement.class);
         startActivity(intent);
     }
 }
