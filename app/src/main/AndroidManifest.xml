@@ -30,7 +30,8 @@
         <activity
             android:name=".Streamer"
             android:screenOrientation="portrait" />
-        <activity android:name=".PlaylistDisplay"></activity>
+        <activity android:name=".PlaylistDisplay" />
+        <activity android:name=".FriendManagement"></activity>
     </application>
 
 </manifest>
