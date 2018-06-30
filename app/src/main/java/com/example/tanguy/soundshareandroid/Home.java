@@ -74,9 +74,6 @@ public class Home extends AppCompatActivity {
 
                                     Playlist playlist = new Playlist(ID, name, songsID, lastSongs);
                                     playlistList.add(playlist);
-
-                                    Log.e("ERROR", name);
-
                                 }
 
                                 RecyclerView recyclerView = findViewById(R.id.rvPlaylist);

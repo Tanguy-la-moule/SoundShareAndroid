@@ -2,12 +2,9 @@ package com.example.tanguy.soundshareandroid;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -17,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,10 +24,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -39,10 +31,26 @@ public class Streamer extends AppCompatActivity {
 
     private ImageButton playOrPause;
     private ImageButton nextSongButton;
-    private boolean playPause;
+
+    private boolean playPause = true;
+    private boolean initialStage = false;
+
+    private String title;
+    private String artist;
+    private String coverURL;
+    private String playlistName;
+    private String storageID;
+
+    private String nextTitle;
+    private String nextArtist;
+    private String nextCoverURL;
+    private String nextStorageID;
+
+    private int lectureNb = 0;
+    private ArrayList<String> orderedPlaylist;
+
     private MediaPlayer mediaPlayer;
     private ProgressDialog progressDialog;
-    private boolean initialStage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,31 +62,31 @@ public class Streamer extends AppCompatActivity {
         ImageView ivCover = findViewById(R.id.ivAlbumCover);
         TextView tvPlaylist = findViewById(R.id.tvPlaylist);
 
-        Bundle bundle = getIntent().getExtras();
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
 
-        String title = bundle.getString("TITLE");
-        String artist = bundle.getString("ARTIST");
-        final String storageID = bundle.getString("STORAGEID");
-        String coverURL = bundle.getString("COVERURL");
-        String playlistName = bundle.getString("PLAYLISTNAME");
+        this.title = bundle.getString("TITLE");
+        this.artist = bundle.getString("ARTIST");
+        this.coverURL = bundle.getString("COVERURL");
+        this.playlistName = bundle.getString("PLAYLISTNAME");
+        this.storageID = bundle.getString("STORAGEID");
+        this.orderedPlaylist = bundle.getStringArrayList("SONGSID");
+        this.lectureNb = intent.getExtras().getInt("LECTURENB");
 
-        notificationCall(title, artist);
+        notificationCall();
+        Picasso.with(this).load(this.coverURL).resize(650, 650).into(ivCover);
 
-        Picasso.with(this).load(coverURL).resize(650, 650).into(ivCover);
+        tvTitle.setText(this.title);
+        tvArtist.setText(this.artist);
+        tvPlaylist.setText(this.playlistName);
 
-        tvTitle.setText(title);
-        tvArtist.setText(artist);
-        tvPlaylist.setText(playlistName);
+        this.mediaPlayer = new MediaPlayer();
+        this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        this.progressDialog = new ProgressDialog(this);
+        new Player().execute(storageID);
 
         playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
-
-        mediaPlayer = new MediaPlayer();
-
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        progressDialog = new ProgressDialog(this);
-        new Player().execute(storageID);
         playOrPause.setImageResource(R.drawable.ic_pause_white);
-
         playOrPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,18 +110,11 @@ public class Streamer extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-
-        final ArrayList<String> orderedPlaylist = bundle.getStringArrayList("SONGSID");
-        int previousLectureNb = intent.getExtras().getInt("LECTURENB");
-        final int lectureNb;
-        if(previousLectureNb + 1 == orderedPlaylist.size()){
-            lectureNb = 0;
+        if(this.lectureNb + 1 == this.orderedPlaylist.size()){
+            this.lectureNb = 0;
         } else {
-            lectureNb = previousLectureNb + 1;
+            this.lectureNb = this.lectureNb + 1;
         }
-
-        nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -125,18 +126,18 @@ public class Streamer extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
                         Map<String, Object> songJson = document.getData();
-                        String ID = document.getId();
                         String artist = (String) songJson.get("artist");
                         String title = (String) songJson.get("title");
                         String storageID = (String) songJson.get("storageID");
                         String coverURL = (String) songJson.get("coverURL");
 
-                        final SongInPlaylist nextSong = new SongInPlaylist(ID, artist, title, storageID, coverURL);
+                        setNextSong(title, artist, coverURL, storageID);
 
+                        nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
                         nextSongButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                streamNextSong(view, nextSong, orderedPlaylist, lectureNb);
+                                nextStream(view);
                             }
                         });
                     } else {
@@ -149,27 +150,6 @@ public class Streamer extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public void streamNextSong(View view, SongInPlaylist nextSong, ArrayList<String> orderedPlaylist, int lectureNb) {
-        Intent intent = new Intent(this, Streamer.class);
-        Bundle bundle = new Bundle();
-
-        if (mediaPlayer != null){
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-
-        bundle.putString("SONGID", nextSong.getSongID());
-        bundle.putString("TITLE", nextSong.getTitle());
-        bundle.putString("ARTIST", nextSong.getArtist());
-        bundle.putString("STORAGEID", nextSong.getStorageID());
-        bundle.putString("COVERURL", nextSong.getCoverURL());
-        bundle.putStringArrayList("SONGSID", orderedPlaylist);
-        intent.putExtras(bundle);
-        intent.putExtra("LECTURENB", lectureNb);
-        startActivity(intent);
     }
 
     public void resetSong(View view){
@@ -267,11 +247,11 @@ public class Streamer extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void notificationCall(String title, String artist){
+    public void notificationCall(){
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_miniature)
-                .setContentTitle(title)
-                .setContentText(artist)
+                .setContentTitle(this.title)
+                .setContentText(this.artist)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setVibrate(new long[]{0L}); // Passing null here silently fails
 
@@ -294,4 +274,115 @@ public class Streamer extends AppCompatActivity {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(ns);
         notificationManager.cancel(1);
     }
+
+    public void setNextSong(String title, String artist, String coverURL, String storageID){
+        this.title = this.nextTitle;
+        this.artist = this.nextArtist;
+        this.coverURL = this.nextCoverURL;
+        this.storageID = this.nextStorageID;
+        this.nextTitle = title;
+        this.nextArtist = artist;
+        this.nextCoverURL = coverURL;
+        this.nextStorageID = storageID;
+    }
+
+    public void nextStream(View view){
+        if (this.mediaPlayer != null){
+            this.mediaPlayer.reset();
+            this.mediaPlayer.release();
+            this.mediaPlayer = null;
+        }
+
+        final String finalNextStorageID = this.nextStorageID;
+
+        TextView tvTitle = findViewById(R.id.tvTitle);
+        TextView tvArtist = findViewById(R.id.tvArtist);
+        ImageView ivCover = findViewById(R.id.ivAlbumCover);
+
+        tvTitle.setText(this.nextTitle);
+        tvArtist.setText(this.nextArtist);
+        Picasso.with(this).load(this.nextCoverURL).resize(650, 650).into(ivCover);
+
+        cancelNotification(getBaseContext());
+        notificationCall();
+
+        playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
+
+        this.mediaPlayer = new MediaPlayer();
+        this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        progressDialog = new ProgressDialog(this);
+        new Player().execute(this.nextStorageID);
+        playOrPause.setImageResource(R.drawable.ic_pause_white);
+        playOrPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!playPause) {
+                    playOrPause.setImageResource(R.drawable.ic_pause_white);
+                    if (initialStage) {
+                        new Player().execute(finalNextStorageID);
+                    } else {
+                        if (!mediaPlayer.isPlaying()) {
+                            mediaPlayer.start();
+                        }
+                    }
+                    playPause = true;
+                } else {
+                    playOrPause.setImageResource(R.drawable.ic_play_arrow_white);
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                    playPause = false;
+                }
+            }
+        });
+
+        if(this.lectureNb + 1 == this.orderedPlaylist.size()){
+            this.lectureNb = 0;
+        } else {
+            this.lectureNb = this.lectureNb + 1;
+        }
+
+        nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
+        nextSongButton.setOnClickListener(null);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("songs").document(orderedPlaylist.get(lectureNb))
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        Map<String, Object> songJson = document.getData();
+                        String artist = (String) songJson.get("artist");
+                        String title = (String) songJson.get("title");
+                        String storageID = (String) songJson.get("storageID");
+                        String coverURL = (String) songJson.get("coverURL");
+
+                        setNextSong(title, artist, coverURL, storageID);
+
+                        nextSongButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                nextStream(view);
+                            }
+                        });
+                    } else {
+                        Log.i("DATABASE", "No such document in the database");
+                    }
+
+
+                } else {
+                    Log.i("DATABASE", "couldn't get next song from db");
+                }
+            }
+        });
+
+
+
+
+    }
+
+
 }
