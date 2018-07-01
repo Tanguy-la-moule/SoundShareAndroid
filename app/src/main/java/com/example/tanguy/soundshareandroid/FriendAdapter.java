@@ -1,11 +1,15 @@
 package com.example.tanguy.soundshareandroid;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -45,11 +49,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextViewUsername;
+        ImageButton deleteButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextViewUsername = itemView.findViewById(R.id.tvUsername);
-            itemView.setOnClickListener(this);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.deleteButton);
+            deleteButton.setOnClickListener(this);
         }
 
         @Override
@@ -71,5 +77,4 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
-
 }

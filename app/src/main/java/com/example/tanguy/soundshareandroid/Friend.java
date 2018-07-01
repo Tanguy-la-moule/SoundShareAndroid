@@ -14,4 +14,8 @@ public class Friend {
     public String getUsername(){
         return this.username;
     }
+
+    public String getID(){
+        return this.ID;
+    }
 }
