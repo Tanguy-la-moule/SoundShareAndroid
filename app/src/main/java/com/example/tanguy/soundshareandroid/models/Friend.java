@@ -1,4 +1,4 @@
-package com.example.tanguy.soundshareandroid;
+package com.example.tanguy.soundshareandroid.models;
 
 public class Friend {
     private String ID;

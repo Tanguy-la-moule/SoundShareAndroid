@@ -1,4 +1,4 @@
-package com.example.tanguy.soundshareandroid;
+package com.example.tanguy.soundshareandroid.adapters;
 
 import android.content.Context;
 import android.media.Image;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tanguy.soundshareandroid.models.Friend;
+import com.example.tanguy.soundshareandroid.R;
 
 import java.util.List;
 
