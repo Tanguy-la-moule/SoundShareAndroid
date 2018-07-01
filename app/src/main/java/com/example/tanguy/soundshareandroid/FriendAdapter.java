@@ -1,4 +1,4 @@
-package com.example.tanguy.soundshareandroid.adapters;
+package com.example.tanguy.soundshareandroid;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.tanguy.soundshareandroid.models.Friend;
-import com.example.tanguy.soundshareandroid.R;
 
 import java.util.List;
 

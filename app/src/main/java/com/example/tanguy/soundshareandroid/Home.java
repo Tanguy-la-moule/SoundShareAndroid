@@ -118,4 +118,9 @@ public class Home extends AppCompatActivity {
         Intent intent = new Intent(this, FriendManagement.class);
         startActivity(intent);
     }
+
+    public void goToMap(View view){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
 }

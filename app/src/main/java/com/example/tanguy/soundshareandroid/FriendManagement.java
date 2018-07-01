@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.tanguy.soundshareandroid.adapters.FriendAdapter;
 import com.example.tanguy.soundshareandroid.models.Friend;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -245,5 +244,10 @@ public class FriendManagement extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void goToMap(View view){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }

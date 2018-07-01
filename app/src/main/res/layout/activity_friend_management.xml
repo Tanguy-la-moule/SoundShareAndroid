@@ -78,6 +78,36 @@
         app:srcCompat="@drawable/ic_play_arrow_white"
         tools:ignore="VectorDrawableCompat" />
 
+    <ImageButton
+        android:id="@+id/mapsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_button"
+        android:onClick="goToMap"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_place_black_24dp"
+        tools:ignore="VectorDrawableCompat" />
+
+    <TextView
+        android:id="@+id/textViewMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:text="Map"
+        android:textColor="@android:color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/mapsButton"
+        app:layout_constraintStart_toStartOf="@+id/mapsButton"
+        app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
