@@ -18,11 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-<<<<<<< HEAD
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_place_black_24dp.xml" />
-=======
                                       <entry key="url" value="jar:file:/opt/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_delete_black_24dp.xml" />
->>>>>>> 63d9d3cfa52848c882b0ef0a57e888797fb84cdf
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,11 +29,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-<<<<<<< HEAD
-                            <entry key="outputName" value="ic_place_black_24dp" />
-=======
                             <entry key="outputName" value="ic_delete_white" />
->>>>>>> 63d9d3cfa52848c882b0ef0a57e888797fb84cdf
                             <entry key="sourceFile" value="$USER_HOME$" />
                           </map>
                         </option>

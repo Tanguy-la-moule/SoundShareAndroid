@@ -1,7 +1,10 @@
 package com.example.tanguy.soundshareandroid;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +46,8 @@ public class FriendManagement extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_management);
 
+
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
@@ -52,7 +57,9 @@ public class FriendManagement extends AppCompatActivity {
         } else {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            String userID = currentUser.getUid();
+            final String userID = currentUser.getUid();
+
+            final Context currentContext = this;
 
             db.collection("users").document(userID).collection("friends")
                     .get()
@@ -70,17 +77,69 @@ public class FriendManagement extends AppCompatActivity {
                                     Friend friend = new Friend(ID, email, username);
                                     friendList.add(friend);
                                 }
-
                                 RecyclerView recyclerView = findViewById(R.id.rvFriends);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(FriendManagement.this));
                                 adapter = new FriendAdapter(FriendManagement.this, friendList);
-                                /*adapter.setClickListener(new PlaylistAdapter.ItemClickListener() {
+                                adapter.setClickListener(new FriendAdapter.ItemClickListener() {
                                     @Override
                                     public void onItemClick(View view, int position) {
-                                        Friend friend = friendList.get(position);
-                                        goToPlaylistDisplay(view, playlist.getName(), playlist.getSongsID());
+
+                                        final Friend friend = friendList.get(position);
+
+                                        new android.support.v7.app.AlertDialog.Builder(currentContext)
+                                                .setIcon(R.drawable.ic_delete_white)
+                                                .setTitle("Delete friend")
+                                                .setMessage("Are you sure you want to delete " + friend.getUsername() + " ?")
+                                                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                                                {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Log.e("DELETE", "delete" + friend.getUsername());
+                                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                        db.collection("users").document(userID).collection("friends").document(friend.getID())
+                                                                .delete()
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.e("DELETE FRIEND", "friend deleted from your side");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w("DELETE FRIEND", "Error deleting document", e);
+                                                                    }
+                                                                });
+                                                        db.collection("users").document(friend.getID()).collection("friends").document(userID)
+                                                                .delete()
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.e("DELETE FRIEND", "friend deleted on his side");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w("DELETE FRIEND", "Error deleting document", e);
+                                                                    }
+                                                                });
+                                                        for(int i = 0; i < friendList.size(); i++){
+                                                            if(friendList.get(i).getID() == friend.getID()){
+                                                                friendList.remove(i);
+                                                                Log.e("DELETE FRIEND", "deleted from the local list");
+                                                            }
+                                                            adapter.notifyDataSetChanged();
+                                                        }
+                                                    }
+
+                                                })
+                                                .setNegativeButton("No", null)
+                                                .show();
+
+                                        Log.e("DELETE FRIEND", friend.getUsername().toString());
                                     }
-                                });*/
+                                });
 
                                 recyclerView.setAdapter(adapter);
 
@@ -184,6 +243,12 @@ public class FriendManagement extends AppCompatActivity {
                                     friend.put("ID", friendID);
                                     friend.put("email", finalFriendEmail);
                                     friend.put("username", friendUsername);
+
+                                    friendList.add(new Friend(friendID, finalFriendEmail, friendUsername));
+                                    adapter.notifyDataSetChanged();
+                                    EditText editTextEmail = (EditText) findViewById(R.id.etNewFriend);
+                                    editTextEmail.setText("");
+
 
                                     db.collection("users").document(finalUserID).collection("friends").document(friendID)
                                             .set(friend)
