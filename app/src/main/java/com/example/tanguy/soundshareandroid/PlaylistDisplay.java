@@ -27,8 +27,6 @@ public class PlaylistDisplay extends AppCompatActivity {
     SongAdapter adapter;
 
     private ArrayList<SongInPlaylist> songList;
-    private String[] playlistSongs;
-    private TextView tvTitle;
 
     public PlaylistDisplay(){
         this.songList = new ArrayList<SongInPlaylist>();

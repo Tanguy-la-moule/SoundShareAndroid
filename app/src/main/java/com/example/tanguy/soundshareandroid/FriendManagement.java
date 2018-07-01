@@ -8,21 +8,30 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.ProviderQueryResult;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FriendManagement extends AppCompatActivity {
+    public Friend user;
+    public Friend friend;
 
     private ArrayList<Friend> friendList;
     FriendAdapter adapter;
@@ -103,20 +112,21 @@ public class FriendManagement extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void addFriend(View view){
+    public void checkFriendEmail(View view){
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-        TextView TextViewEmail = (TextView) findViewById(R.id.etNewFriend);
+        EditText editTextEmail = (EditText) findViewById(R.id.etNewFriend);
 
-        final String friendEmail = TextViewEmail.toString();
+        final String friendEmail = (String) editTextEmail.getText().toString();
 
+        Log.e("EMAIL", friendEmail);
 
         firebaseAuth.fetchProvidersForEmail(friendEmail)
                 .addOnCompleteListener(new OnCompleteListener<ProviderQueryResult>() {
                     @Override
                     public void onComplete(@NonNull Task<ProviderQueryResult> task) {
-                        if(!task.getResult().getProviders().isEmpty() && !friendEmail.equals(currentUser.getEmail())){
+                        if (!task.getResult().getProviders().isEmpty() && !friendEmail.equals(currentUser.getEmail())) {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("users")
                                     .document(currentUser.getUid())
@@ -127,17 +137,112 @@ public class FriendManagement extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if (task.isSuccessful()) {
                                                 boolean alreadyFriend = false;
+                                                String friendID = "";
+
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    if(!alreadyFriend && document.getData().get("email") == friendEmail){
+                                                    if (!alreadyFriend && document.getData().get("email").equals(friendEmail)) {
                                                         Log.e("FRIEND", "ALREADY A FRIEND");
+                                                        alreadyFriend = true;
                                                     }
                                                 }
-                                                if (!alreadyFriend){
-                                                    Log.e("FRIEND", "EXIST AND NOT FRIEND ALREADY");
+                                                if (!alreadyFriend) {
+                                                    Log.e("FRIEND", "EXIST AND NOT FRIEND ALREADY" + friendID.toString());
+                                                    addFriend(currentUser.getUid(), friendEmail);
                                                 }
                                             }
-                                    }});
+                                        }
+                                    });
 
+
+                        } else {
+                            Log.e("FRIENDS", "l'email est celui de l'utilisateur ou n'existe pas dans la bdd");
+                        }
+                    }});
+    }
+
+    public void addFriend(String userID, final String friendEmail){
+        final String finalUserID = userID;
+        final String finalFriendEmail = friendEmail;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.getData().get("email").equals(finalFriendEmail)) {
+                                    Log.e("ADD FRIEND", "coucou" + finalFriendEmail + finalUserID);
+
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                                    final String friendID = document.getData().get("id").toString();
+                                    String friendUsername = document.getData().get("username").toString();
+
+                                    Map<String, Object> friend = new HashMap<>();
+                                    friend.put("ID", friendID);
+                                    friend.put("email", finalFriendEmail);
+                                    friend.put("username", friendUsername);
+
+                                    db.collection("users").document(finalUserID).collection("friends").document(friendID)
+                                            .set(friend)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.e("ADD FRIEND", "friend added to your list");
+                                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                                    db.collection("users")
+                                                            .document(finalUserID).get()
+                                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                                                        DocumentSnapshot document = task.getResult();
+
+                                                                        String userUsername = document.getData().get("username").toString();
+
+
+                                                                        Map<String, Object> user = new HashMap<>();
+                                                                        user.put("ID", finalUserID);
+                                                                        user.put("email", firebaseAuth.getCurrentUser().getEmail().toString());
+                                                                        user.put("username", userUsername);
+
+                                                                        db.collection("users").document(friendID).collection("friends").document(finalUserID)
+                                                                                .set(user)
+                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void aVoid) {
+                                                                                        Log.e("ADD FRIEND", "added to your new friend's list");
+                                                                                    }
+                                                                                })
+                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                    @Override
+                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                        Log.e("ADD FRIEND", "erreur"+ e.getMessage());
+                                                                                    }
+                                                                                });
+
+
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("ADD FRIEND", "erreur"+ e.getMessage());
+                                                }
+                                            });
+                                }
+                            }
                         }
                     }
                 });
