@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.tanguy.soundshareandroid.models.SongInPlaylist;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,9 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class PlaylistDisplay extends AppCompatActivity {

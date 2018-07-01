@@ -1,4 +1,4 @@
-package com.example.tanguy.soundshareandroid;
+package com.example.tanguy.soundshareandroid.models;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

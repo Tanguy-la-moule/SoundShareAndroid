@@ -1,4 +1,4 @@
-package com.example.tanguy.soundshareandroid;
+package com.example.tanguy.soundshareandroid.models;
 
 import java.util.ArrayList;
 
