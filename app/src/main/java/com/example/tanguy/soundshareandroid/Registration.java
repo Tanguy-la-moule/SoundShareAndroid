@@ -1,11 +1,12 @@
 package com.example.tanguy.soundshareandroid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,33 +40,20 @@ public class Registration extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
     }
 
-    /**
-     * For going to the main page
-     * @param view Current view
-     */
     public void backHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    /**
-     * For logging in the application
-     * @param view Current view
-     */
     public void sendToConnection(View view){
         Intent intent = new Intent(this, Connection.class);
         startActivity(intent);
     }
 
-    /**
-     * For signing up the application
-     * @param view Current view
-     */
     public void signUp(View view) {
-        // Get required info
-        EditText editEmail = findViewById(R.id.editText6);
-        EditText editPassword = findViewById(R.id.editText7);
-        EditText editUsername = findViewById(R.id.editText);
+        EditText editEmail = (EditText) findViewById(R.id.editText6);
+        EditText editPassword = (EditText) findViewById(R.id.editText7);
+        EditText editUsername = (EditText) findViewById(R.id.editText);
         final String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
         final String username = editUsername.getText().toString();
@@ -120,36 +108,5 @@ public class Registration extends AppCompatActivity {
                         }
                     });
         }
-    }
-
-    public void AddUser(String username, final Intent intent){
-        /*Map<String, Object> user = new HashMap<>();
-
-        if(!(user == null)) {
-            user.put("user_id", currentUser.getUid());
-            user.put("email", currentUser.getEmail());
-            user.put("username", username);
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            Log.d("DATABASE", "merdier");
-            db.collection("users")
-                    .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d("DATABASE", "Document added with id :");
-                            startActivity(intent);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("DATABASE", "Error adding document", e.getCause());
-                        }
-                    });
-        } else {
-            Log.d("DATABASE", "no user");
-        }*/
     }
 }

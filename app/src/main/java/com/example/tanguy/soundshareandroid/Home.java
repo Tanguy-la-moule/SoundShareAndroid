@@ -136,6 +136,45 @@ public class Home extends AppCompatActivity {
 
     }
 
+    public void createPlaylist(View view){
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        final EditText editPlaylistName = (EditText) findViewById(R.id.playlistName);
+        final String newPlaylistName = editPlaylistName.getText().toString();
+        if(newPlaylistName.length() > 5){
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            String userID = firebaseAuth.getCurrentUser().getUid();
+
+            Map<String, Object> playlist = new HashMap<>();
+            playlist.put("name", newPlaylistName);
+            playlist.put("songs", new ArrayList<String>());
+
+            db.collection("users").document(userID).collection("playlists").add(playlist)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Playlist newPlaylist = new Playlist(documentReference.getId(), newPlaylistName, new ArrayList<String>(), new ArrayList<String>());
+                            playlistList.add(newPlaylist);
+                            adapter.notifyDataSetChanged();
+                            editPlaylistName.setText("");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("NEW PLAYLIST", "Error adding playlist" + e.getMessage());
+                        }
+                    });
+        } else {
+            Snackbar.make(view, "Playlist name has to be at least 6 characters long", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+
+    }
+
     @Override
     public void onBackPressed(){
         Boolean disableButton =  true;

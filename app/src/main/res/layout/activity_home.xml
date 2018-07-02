@@ -130,7 +130,7 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/mapsButton"
         app:layout_constraintStart_toStartOf="@+id/mapsButton"
-        app:layout_constraintTop_toBottomOf="@+id/mapsButton" />/>
+        app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
 
     <TextView
         android:id="@+id/textView3"
@@ -180,20 +180,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <Button
-        android:id="@+id/addPlaylistButton"
-        android:layout_width="121dp"
-        android:layout_height="43dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/rounded_button"
-        android:onClick="addPlaylist"
-        android:text="Add Playlist"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <EditText
         android:id="@+id/playlistName"
         android:layout_width="0dp"
@@ -203,7 +189,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Playlist name"
         android:inputType="textPersonName"
