@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * Class for gps-tracking
+ */
 @SuppressLint("Registered")
 public class GPSTracker extends Service implements LocationListener {
 

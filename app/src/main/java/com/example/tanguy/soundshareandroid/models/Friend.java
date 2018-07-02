@@ -1,5 +1,8 @@
 package com.example.tanguy.soundshareandroid.models;
 
+/**
+ * Class of friend
+ */
 public class Friend {
     private String ID;
     private String email;

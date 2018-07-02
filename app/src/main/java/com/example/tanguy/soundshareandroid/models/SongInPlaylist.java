@@ -1,5 +1,8 @@
 package com.example.tanguy.soundshareandroid.models;
 
+/**
+ * Song object
+ */
 public class SongInPlaylist {
     private String songID;
     private String artist;

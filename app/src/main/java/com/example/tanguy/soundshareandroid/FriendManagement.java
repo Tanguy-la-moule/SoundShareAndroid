@@ -46,11 +46,10 @@ public class FriendManagement extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_management);
 
-
-
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
+        // Check if user exists
         if (currentUser == null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -58,9 +57,9 @@ public class FriendManagement extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             final String userID = currentUser.getUid();
-
             final Context currentContext = this;
 
+            // Get the list of user's friends from database
             db.collection("users").document(userID).collection("friends")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -77,6 +76,7 @@ public class FriendManagement extends AppCompatActivity {
                                     Friend friend = new Friend(ID, email, username);
                                     friendList.add(friend);
                                 }
+                                // Display all friends
                                 RecyclerView recyclerView = findViewById(R.id.rvFriends);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(FriendManagement.this));
                                 adapter = new FriendAdapter(FriendManagement.this, friendList);
@@ -136,35 +136,32 @@ public class FriendManagement extends AppCompatActivity {
                                                 })
                                                 .setNegativeButton("No", null)
                                                 .show();
-
-                                        Log.e("DELETE FRIEND", friend.getUsername().toString());
-                                    }
+                                        }
                                 });
-
                                 recyclerView.setAdapter(adapter);
-
-
-
-
-
                             } else {
                                 Log.e("ERROR", "error getting playlists" + task.getException());
                             }
                         }
                     });
-
-
         }
     }
 
+    /**
+     * For going to home page
+     * @param view Current view
+     */
     public void goToHome(View view){
         Intent intent = new Intent(this, Home.class);
         startActivity(intent);
     }
 
+    /**
+     * For logging out of the application and returning to main page
+     * @param view Current view
+     */
     public void logOut(View view){
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -209,8 +206,6 @@ public class FriendManagement extends AppCompatActivity {
                                             }
                                         }
                                     });
-
-
                         } else {
                             Log.e("FRIENDS", "l'email est celui de l'utilisateur ou n'existe pas dans la bdd");
                         }
@@ -235,7 +230,6 @@ public class FriendManagement extends AppCompatActivity {
 
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-
                                     final String friendID = document.getData().get("id").toString();
                                     String friendUsername = document.getData().get("username").toString();
 
@@ -248,7 +242,6 @@ public class FriendManagement extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();
                                     EditText editTextEmail = (EditText) findViewById(R.id.etNewFriend);
                                     editTextEmail.setText("");
-
 
                                     db.collection("users").document(finalUserID).collection("friends").document(friendID)
                                             .set(friend)
@@ -271,7 +264,6 @@ public class FriendManagement extends AppCompatActivity {
 
                                                                         String userUsername = document.getData().get("username").toString();
 
-
                                                                         Map<String, Object> user = new HashMap<>();
                                                                         user.put("ID", finalUserID);
                                                                         user.put("email", firebaseAuth.getCurrentUser().getEmail().toString());
@@ -291,8 +283,6 @@ public class FriendManagement extends AppCompatActivity {
                                                                                         Log.e("ADD FRIEND", "erreur"+ e.getMessage());
                                                                                     }
                                                                                 });
-
-
                                                                     }
                                                                 }
                                                             });
@@ -311,6 +301,10 @@ public class FriendManagement extends AppCompatActivity {
                 });
     }
 
+    /**
+     * For going to the map page
+     * @param view Current view
+     */
     public void goToMap(View view){
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);

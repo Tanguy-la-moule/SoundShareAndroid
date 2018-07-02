@@ -27,20 +27,24 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Streamer class for playing songs
+ */
 public class Streamer extends AppCompatActivity {
 
+    // Music navigation buttons
     private ImageButton playOrPause;
     private ImageButton nextSongButton;
 
     private boolean playPause = true;
     private boolean initialStage = false;
-
+    // Current song's info
     private String title;
     private String artist;
     private String coverURL;
     private String playlistName;
     private String storageID;
-
+    // Next song's info
     private String nextTitle;
     private String nextArtist;
     private String nextCoverURL;
@@ -62,9 +66,11 @@ public class Streamer extends AppCompatActivity {
         ImageView ivCover = findViewById(R.id.ivAlbumCover);
         TextView tvPlaylist = findViewById(R.id.tvPlaylist);
 
+        // Get intent of user just before streaming
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
+        // Recover song's info from intent
+        assert bundle != null;
         this.title = bundle.getString("TITLE");
         this.artist = bundle.getString("ARTIST");
         this.coverURL = bundle.getString("COVERURL");
@@ -72,20 +78,19 @@ public class Streamer extends AppCompatActivity {
         this.storageID = bundle.getString("STORAGEID");
         this.orderedPlaylist = bundle.getStringArrayList("SONGSID");
         this.lectureNb = intent.getExtras().getInt("LECTURENB");
-
+        // Load song's info
         notificationCall();
         Picasso.with(this).load(this.coverURL).resize(650, 650).into(ivCover);
-
         tvTitle.setText(this.title);
         tvArtist.setText(this.artist);
         tvPlaylist.setText(this.playlistName);
-
+        // Play the song
         this.mediaPlayer = new MediaPlayer();
         this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         this.progressDialog = new ProgressDialog(this);
         new Player().execute(storageID);
-
-        playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
+        // Managing play - pause button
+        playOrPause = findViewById(R.id.audioStreamBtn);
         playOrPause.setImageResource(R.drawable.ic_pause_white);
         playOrPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,15 +114,15 @@ public class Streamer extends AppCompatActivity {
                 }
             }
         });
-
+        // We want the playlist to play again once it is over
         if(this.lectureNb + 1 == this.orderedPlaylist.size()){
             this.lectureNb = 0;
         } else {
             this.lectureNb = this.lectureNb + 1;
         }
 
+        //Getting the next song's info
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         db.collection("songs").document(orderedPlaylist.get(lectureNb))
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -133,7 +138,7 @@ public class Streamer extends AppCompatActivity {
 
                         setNextSong(title, artist, coverURL, storageID);
 
-                        nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
+                        nextSongButton = findViewById(R.id.ibNextSong);
                         nextSongButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -143,8 +148,6 @@ public class Streamer extends AppCompatActivity {
                     } else {
                         Log.i("DATABASE", "No such document in the database");
                     }
-
-
                 } else {
                     Log.i("DATABASE", "couldn't get next song from db");
                 }
@@ -152,14 +155,16 @@ public class Streamer extends AppCompatActivity {
         });
     }
 
+    /**
+     * Reset the current song
+     * @param view Current view
+     */
     public void resetSong(View view){
         if (mediaPlayer != null){
             mediaPlayer.reset();
         }
     }
-
-
-
+-
     class Player extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... strings){
@@ -378,7 +383,6 @@ public class Streamer extends AppCompatActivity {
                 }
             }
         });
-
 
 
 

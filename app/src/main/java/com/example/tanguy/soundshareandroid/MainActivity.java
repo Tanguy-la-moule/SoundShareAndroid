@@ -1,16 +1,16 @@
 package com.example.tanguy.soundshareandroid;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
-
+/**
+ * Main page of application, before logging in
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * On start, if user is already connected, send to home page
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -42,11 +45,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * For logging in the application
+     * @param view Current view
+     */
     public void sendToConnection(View view){
         Intent intent = new Intent(this, Connection.class);
         startActivity(intent);
     }
 
+    /**
+     * For signing up the application
+     * @param view Current view
+     */
     public void sendToRegistration(View view){
         Intent intent = new Intent(this, Registration.class);
         startActivity(intent);
