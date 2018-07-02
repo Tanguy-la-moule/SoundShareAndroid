@@ -188,8 +188,6 @@ public class Streamer extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                        Log.e("DELETE SONG", "poule"+ finalPlaylistID);
-
                         db.collection("users").document(userID).collection("playlists").document(finalPlaylistID).get()
                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -446,8 +444,6 @@ public class Streamer extends AppCompatActivity {
                     } else {
                         Log.i("DATABASE", "No such document in the database");
                     }
-
-
                 } else {
                     Log.i("DATABASE", "couldn't get next song from db");
                 }

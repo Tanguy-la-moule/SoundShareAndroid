@@ -1,5 +1,7 @@
 package com.example.tanguy.soundshareandroid;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 
 import com.example.tanguy.soundshareandroid.models.SongInPlaylist;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,8 +28,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class PlaylistDisplay extends AppCompatActivity {
-    SongAdapter adapter;
 
+    private SongAdapter adapter;
+    private String playlistID;
+    private String playlistName;
+    private String userID;
     private ArrayList<SongInPlaylist> songList;
 
     public PlaylistDisplay(){
@@ -42,8 +49,8 @@ public class PlaylistDisplay extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        final String playlistName = bundle.getString("NAME");
-        final String playlistID = bundle.getString("PLAYLISTID");
+        playlistName = bundle.getString("NAME");
+        playlistID = bundle.getString("PLAYLISTID");
         final ArrayList<String> playlistSongs = bundle.getStringArrayList("SONGSID");
 
         TextView tvTitle = findViewById(R.id.tvTitle);
@@ -53,6 +60,7 @@ public class PlaylistDisplay extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
+            this.userID = currentUser.getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             db.collection("songs")
@@ -117,7 +125,7 @@ public class PlaylistDisplay extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        ImageButton backButton = (ImageButton) findViewById(R.id.imageButton6);
+        ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
         backButton.performClick();
 
     }
@@ -158,5 +166,52 @@ public class PlaylistDisplay extends AppCompatActivity {
             songIdList.add(songList.get(i).getSongID());
         }
         return songIdList;
+    }
+
+    public void deletePlaylist(View view){
+        final Context currentContext = this;
+
+
+        new android.support.v7.app.AlertDialog.Builder(currentContext)
+                .setIcon(R.drawable.ic_delete_white)
+                .setTitle("Delete playlist")
+                .setMessage("Are you sure you want to delete " + playlistName + " ?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        db.collection("users").document(userID).collection("playlists").document(playlistID)
+                                .delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.e("DELETE PLAYLIST", "playlist deleted from firestore");
+                                        ImageButton previousButton = (ImageButton) findViewById(R.id.backButton);
+                                        previousButton.performClick();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("DELETE PLAYLIST", "Error deleting playlist", e);
+                                    }
+                                });
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    public void goToAddSong(View view){
+        Intent intent = new Intent(this, addSongToPlaylist.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("PLAYLISTID", playlistID);
+        bundle.putString("PLAYLISTNAME", playlistName);
+        bundle.putStringArrayList("SONGSID", convertSongToString(songList));
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

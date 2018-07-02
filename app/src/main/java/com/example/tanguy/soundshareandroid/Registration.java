@@ -107,37 +107,4 @@ public class Registration extends AppCompatActivity {
                     });
         }
     }
-
-    public void AddUser(String username, final Intent intent){
-
-
-        /*Map<String, Object> user = new HashMap<>();
-
-        if(!(user == null)) {
-            user.put("user_id", currentUser.getUid());
-            user.put("email", currentUser.getEmail());
-            user.put("username", username);
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            Log.d("DATABASE", "merdier");
-            db.collection("users")
-                    .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d("DATABASE", "Document added with id :");
-                            startActivity(intent);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("DATABASE", "Error adding document", e.getCause());
-                        }
-                    });
-        } else {
-            Log.d("DATABASE", "no user");
-        }*/
-    }
 }
