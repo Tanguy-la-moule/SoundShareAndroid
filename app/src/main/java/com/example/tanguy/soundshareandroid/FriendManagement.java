@@ -136,6 +136,7 @@ public class FriendManagement extends AppCompatActivity {
                                                 })
                                                 .setNegativeButton("No", null)
                                                 .show();
+                                        Log.e("DELETE FRIEND", friend.getUsername().toString());
                                         }
                                 });
                                 recyclerView.setAdapter(adapter);

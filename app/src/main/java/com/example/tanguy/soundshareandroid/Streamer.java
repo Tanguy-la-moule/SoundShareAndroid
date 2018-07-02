@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -85,7 +86,7 @@ public class Streamer extends AppCompatActivity {
         this.orderedPlaylist = bundle.getStringArrayList("SONGSID");
         this.lectureNb = intent.getExtras().getInt("LECTURENB");
         // Load song's info
-        notificationCall();
+        notificationCall(this.title, this.artist);
         Picasso.with(this).load(this.coverURL).resize(650, 650).into(ivCover);
         tvTitle.setText(this.title);
         tvArtist.setText(this.artist);
@@ -383,7 +384,7 @@ public class Streamer extends AppCompatActivity {
         Picasso.with(this).load(this.nextCoverURL).resize(650, 650).into(ivCover);
 
         cancelNotification(getBaseContext());
-        notificationCall();
+        notificationCall(this.nextTitle, this.nextArtist);
 
         playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
 
