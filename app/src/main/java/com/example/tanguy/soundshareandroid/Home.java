@@ -75,7 +75,7 @@ public class Home extends AppCompatActivity {
                                     @Override
                                     public void onItemClick(View view, int position) {
                                         Playlist playlist = playlistList.get(position);
-                                        goToPlaylistDisplay(view, playlist.getName(), playlist.getSongsID());
+                                        goToPlaylistDisplay(view, playlist.getName(), playlist.getID(), playlist.getSongsID());
                                     }
                                 });
 
@@ -105,10 +105,11 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToPlaylistDisplay(View view, String name, ArrayList<String> songsID){
+    public void goToPlaylistDisplay(View view, String name, String playlistID, ArrayList<String> songsID){
         Intent intent = new Intent(this, PlaylistDisplay.class);
         Bundle bundle = new Bundle();
         bundle.putString("NAME", name);
+        bundle.putString("PLAYLISTID", playlistID);
         bundle.putStringArrayList("SONGSID", songsID);
         intent.putExtras(bundle);
         startActivity(intent);

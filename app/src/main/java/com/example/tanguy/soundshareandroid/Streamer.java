@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -19,12 +20,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Streamer extends AppCompatActivity {
@@ -39,6 +44,7 @@ public class Streamer extends AppCompatActivity {
     private String artist;
     private String coverURL;
     private String playlistName;
+    private String playlistID;
     private String storageID;
 
     private String nextTitle;
@@ -69,6 +75,7 @@ public class Streamer extends AppCompatActivity {
         this.artist = bundle.getString("ARTIST");
         this.coverURL = bundle.getString("COVERURL");
         this.playlistName = bundle.getString("PLAYLISTNAME");
+        this.playlistID = bundle.getString("PLAYLISTID");
         this.storageID = bundle.getString("STORAGEID");
         this.orderedPlaylist = bundle.getStringArrayList("SONGSID");
         this.lectureNb = intent.getExtras().getInt("LECTURENB");
@@ -153,9 +160,77 @@ public class Streamer extends AppCompatActivity {
     }
 
     public void resetSong(View view){
-        if (mediaPlayer != null){
-            mediaPlayer.reset();
+        if (this.mediaPlayer != null){
+            this.mediaPlayer.reset();
+            this.progressDialog = new ProgressDialog(this);
+            new Player().execute(storageID);
+
+
         }
+    }
+
+    public void deleteSongFromPlaylist(View view){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final String userID = firebaseAuth.getCurrentUser().getUid();
+
+        final Context currentContext = this;
+        final String finalSongID = this.orderedPlaylist.get(this.lectureNb);
+        final String finalPlaylistID = this.playlistID;
+
+
+        new android.support.v7.app.AlertDialog.Builder(currentContext)
+                .setIcon(R.drawable.ic_delete_white)
+                .setTitle("Delete song")
+                .setMessage("Are you sure you want to delete " + this.title + " from the " + this.playlistName + " playlist?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        Log.e("DELETE SONG", "poule"+ finalPlaylistID);
+
+                        db.collection("users").document(userID).collection("playlists").document(finalPlaylistID).get()
+                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (document.exists()) {
+                                                String name = (String) document.getData().get("name");
+                                                ArrayList<String> songsID = (ArrayList<String>) document.getData().get("songs");
+                                                songsID.remove(finalSongID);
+
+                                                Map<String, Object> newPlaylist = new HashMap<>();
+                                                newPlaylist.put("name", name);
+                                                newPlaylist.put("songs", songsID);
+
+                                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                db.collection("users").document(userID).collection("playlists").document(playlistID).set(newPlaylist);
+                                                Log.e("DELETE SONG", "song deleted from playlist database");
+
+                                                orderedPlaylist.remove(finalSongID);
+                                                lectureNb = lectureNb - 1;
+
+                                                nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
+                                                nextSongButton.performClick();
+                                            } else {
+                                                Log.d("DELETE SONG", "No such playlistID");
+                                            }
+                                        } else {
+                                            Log.d("DELETE SONG", "get failed with ", task.getException());
+                                        }
+                                    }
+                                });
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+
+
+
+
     }
 
 
@@ -378,11 +453,5 @@ public class Streamer extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
     }
-
-
 }

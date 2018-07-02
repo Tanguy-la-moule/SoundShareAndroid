@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.tanguy.soundshareandroid.models.SongInPlaylist;
@@ -42,6 +43,7 @@ public class PlaylistDisplay extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
 
         final String playlistName = bundle.getString("NAME");
+        final String playlistID = bundle.getString("PLAYLISTID");
         final ArrayList<String> playlistSongs = bundle.getStringArrayList("SONGSID");
 
         TextView tvTitle = findViewById(R.id.tvTitle);
@@ -85,7 +87,7 @@ public class PlaylistDisplay extends AppCompatActivity {
                                 @Override
                                 public void onItemClick(View view, int position) {
                                     SongInPlaylist song = songList.get(position);
-                                    goToStreamer(view, position, playlistName, song.getSongID(), song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL(), convertSongToString(songList));
+                                    goToStreamer(view, position, playlistName, playlistID, song.getSongID(), song.getTitle(), song.getArtist(), song.getStorageID(), song.getCoverURL(), convertSongToString(songList));
                                 }
                             });
                             recyclerView.setAdapter(adapter);
@@ -113,7 +115,14 @@ public class PlaylistDisplay extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToStreamer(View view, int position, String playlistName, String songID, String title, String artist, String storageID, String coverURL, ArrayList<String> playlistSongID){
+    @Override
+    public void onBackPressed(){
+        ImageButton backButton = (ImageButton) findViewById(R.id.imageButton6);
+        backButton.performClick();
+
+    }
+
+    public void goToStreamer(View view, int position, String playlistName, String playlistID, String songID, String title, String artist, String storageID, String coverURL, ArrayList<String> playlistSongID){
         Log.e("RANDOM", playlistSongID.toString());
 
         playlistSongID.remove(position);
@@ -136,6 +145,7 @@ public class PlaylistDisplay extends AppCompatActivity {
         bundle.putString("ARTIST", artist);
         bundle.putString("STORAGEID", storageID);
         bundle.putString("COVERURL", coverURL);
+        bundle.putString("PLAYLISTID", playlistID);
         bundle.putStringArrayList("SONGSID", orderedPlaylist);
         intent.putExtras(bundle);
         intent.putExtra("LECTURENB", 0);
