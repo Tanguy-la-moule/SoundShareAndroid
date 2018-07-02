@@ -80,7 +80,7 @@ public class Streamer extends AppCompatActivity {
         this.orderedPlaylist = bundle.getStringArrayList("SONGSID");
         this.lectureNb = intent.getExtras().getInt("LECTURENB");
 
-        notificationCall();
+        notificationCall(this.title, this.artist);
         Picasso.with(this).load(this.coverURL).resize(650, 650).into(ivCover);
 
         tvTitle.setText(this.title);
@@ -320,11 +320,11 @@ public class Streamer extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void notificationCall(){
+    public void notificationCall(String title, String artist){
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_miniature)
-                .setContentTitle(this.title)
-                .setContentText(this.artist)
+                .setContentTitle(title)
+                .setContentText(artist)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setVibrate(new long[]{0L}); // Passing null here silently fails
 
@@ -377,7 +377,7 @@ public class Streamer extends AppCompatActivity {
         Picasso.with(this).load(this.nextCoverURL).resize(650, 650).into(ivCover);
 
         cancelNotification(getBaseContext());
-        notificationCall();
+        notificationCall(this.nextTitle, this.artist);
 
         playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
 
@@ -449,5 +449,13 @@ public class Streamer extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void goToShareSong(View view){
+        Intent intent = new Intent(this, ShareSong.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("SONGID", orderedPlaylist.get(lectureNb));
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

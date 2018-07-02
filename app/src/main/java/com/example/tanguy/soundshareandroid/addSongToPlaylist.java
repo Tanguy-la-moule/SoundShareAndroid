@@ -169,5 +169,4 @@ public class addSongToPlaylist extends AppCompatActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
 }
