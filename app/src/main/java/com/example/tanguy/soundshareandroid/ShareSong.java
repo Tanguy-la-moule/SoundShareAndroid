@@ -43,6 +43,8 @@ public class ShareSong extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_song);
 
+        this.tracker = new GPSTracker(this);
+
         Bundle bundle = getIntent().getExtras();
 
         songID = bundle.getString("SONGID");
