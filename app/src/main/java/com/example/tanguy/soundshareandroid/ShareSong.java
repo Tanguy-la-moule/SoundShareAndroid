@@ -81,10 +81,15 @@ public class ShareSong extends AppCompatActivity {
 
                                         final Friend friend = friendList.get(position);
                                         Log.e("CHOSEN FRIEND", friend.getID());
-                                        Log.e("COORDINATES", Double.toString(tracker.getLongitude()) + Double.toString(tracker.getLatitude()));
+                                        if(tracker.canGetLocation()){
+                                            double latitude = tracker.getLatitude();
+                                            double longitude = tracker.getLongitude();
+                                            Log.e("COORDINATES", latitude + " " + longitude);
+                                        } else {
+                                            tracker.showSettingsAlert();
+                                        }
                                     }
                                 });
-
                                 recyclerView.setAdapter(adapter);
                             }
                         }

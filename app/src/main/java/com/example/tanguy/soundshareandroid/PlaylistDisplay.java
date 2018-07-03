@@ -36,7 +36,7 @@ public class PlaylistDisplay extends AppCompatActivity {
     private ArrayList<SongInPlaylist> songList;
 
     public PlaylistDisplay(){
-        this.songList = new ArrayList<>();
+        this.songList = new ArrayList<SongInPlaylist>();
     }
 
     @Override

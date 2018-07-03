@@ -42,7 +42,7 @@ public class FriendManagement extends AppCompatActivity {
     FriendAdapter adapter;
 
     public FriendManagement(){
-        this.friendList = new ArrayList<>();
+        this.friendList = new ArrayList<Friend>();
     }
 
     @Override

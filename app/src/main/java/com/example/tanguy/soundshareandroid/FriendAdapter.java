@@ -55,7 +55,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         ViewHolder(View itemView) {
             super(itemView);
             myTextViewUsername = itemView.findViewById(R.id.tvUsername);
-            deleteButton = itemView.findViewById(R.id.deleteButton);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.deleteButton);
             deleteButton.setOnClickListener(this);
         }
 

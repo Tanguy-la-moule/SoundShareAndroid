@@ -39,7 +39,7 @@ public class addSongToPlaylist extends AppCompatActivity {
     private SongAdapter adapter;
 
     public addSongToPlaylist(){
-        this.songList = new ArrayList<>();
+        this.songList = new ArrayList<SongInPlaylist>();
     }
 
     @Override
@@ -47,7 +47,9 @@ public class addSongToPlaylist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_song_to_playlist);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
         Bundle bundle = getIntent().getExtras();
 
         playlistID = bundle.getString("PLAYLISTID");
@@ -147,8 +149,8 @@ public class addSongToPlaylist extends AppCompatActivity {
      * @param listID IDs of the playlist's songs
      * @return boolean
      */
-    public boolean isIn(String ID, ArrayList<String> listID){
-        boolean found = false;
+    public Boolean isIn(String ID, ArrayList<String> listID){
+        Boolean found = false;
         for(int i = 0; i < listID.size(); i++){
             if(ID.equals(listID.get(i))){
                 found = true;
