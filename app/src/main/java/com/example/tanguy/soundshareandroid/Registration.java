@@ -1,12 +1,11 @@
 package com.example.tanguy.soundshareandroid;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -51,9 +50,9 @@ public class Registration extends AppCompatActivity {
     }
 
     public void signUp(View view) {
-        EditText editEmail = (EditText) findViewById(R.id.editText6);
-        EditText editPassword = (EditText) findViewById(R.id.editText7);
-        EditText editUsername = (EditText) findViewById(R.id.editText);
+        EditText editEmail = findViewById(R.id.editText6);
+        EditText editPassword = findViewById(R.id.editText7);
+        EditText editUsername = findViewById(R.id.editText);
         final String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
         final String username = editUsername.getText().toString();

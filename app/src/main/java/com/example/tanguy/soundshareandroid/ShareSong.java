@@ -2,6 +2,7 @@ package com.example.tanguy.soundshareandroid;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.tanguy.soundshareandroid.models.Friend;
+import com.example.tanguy.soundshareandroid.models.GPSTracker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,9 +31,11 @@ public class ShareSong extends AppCompatActivity {
     private String songID;
     private ArrayList<Friend> friendList;
     private FriendAdapter adapter;
+    private GPSTracker tracker;
 
     public ShareSong(){
         this.friendList = new ArrayList<Friend>();
+        this.tracker = new GPSTracker(this);
     }
 
     @Override
@@ -77,6 +81,7 @@ public class ShareSong extends AppCompatActivity {
 
                                         final Friend friend = friendList.get(position);
                                         Log.e("CHOSEN FRIEND", friend.getID());
+                                        Log.e("COORDINATES", Double.toString(tracker.getLongitude()) + Double.toString(tracker.getLatitude()));
                                     }
                                 });
 

@@ -11,6 +11,9 @@ import com.example.tanguy.soundshareandroid.models.Playlist;
 
 import java.util.List;
 
+/**
+ * Class for arranging playlists in scrollable rows
+ */
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
     private List<Playlist> mData;

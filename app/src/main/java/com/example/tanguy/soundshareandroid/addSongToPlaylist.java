@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class for adding a song to a playlist
+ */
 public class addSongToPlaylist extends AppCompatActivity {
 
     private String playlistID;
@@ -36,7 +39,7 @@ public class addSongToPlaylist extends AppCompatActivity {
     private SongAdapter adapter;
 
     public addSongToPlaylist(){
-        this.songList = new ArrayList<SongInPlaylist>();
+        this.songList = new ArrayList<>();
     }
 
     @Override
@@ -44,9 +47,7 @@ public class addSongToPlaylist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_song_to_playlist);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = getIntent().getExtras();
 
         playlistID = bundle.getString("PLAYLISTID");
@@ -140,8 +141,14 @@ public class addSongToPlaylist extends AppCompatActivity {
         }
     }
 
-    public Boolean isIn(String ID, ArrayList<String> listID){
-        Boolean found = false;
+    /**
+     * Check if song is already in playlist or not
+     * @param ID ID of the song to add
+     * @param listID IDs of the playlist's songs
+     * @return boolean
+     */
+    public boolean isIn(String ID, ArrayList<String> listID){
+        boolean found = false;
         for(int i = 0; i < listID.size(); i++){
             if(ID.equals(listID.get(i))){
                 found = true;
@@ -150,8 +157,13 @@ public class addSongToPlaylist extends AppCompatActivity {
         return found;
     }
 
+    /**
+     * For going to playlist page
+     * @param view Current view
+     */
     public void goToPlaylistDisplay(View view){
         Intent intent = new Intent(this, PlaylistDisplay.class);
+        // Store the new content in a bundle
         Bundle bundle = new Bundle();
         bundle.putString("NAME", playlistName);
         bundle.putString("PLAYLISTID", playlistID);

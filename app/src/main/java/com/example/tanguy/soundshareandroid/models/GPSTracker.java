@@ -268,7 +268,6 @@ public class GPSTracker extends Service implements LocationListener {
      * @return int
      */
     //TODO
-    // Renvoie le nombre de satellites
     public int getSat() {
         int res=0;
         return res;
@@ -305,7 +304,7 @@ public class GPSTracker extends Service implements LocationListener {
     public double getLongitudeFromAddress(String searchedAddress){
 
         double LongAdresse=0;
-        List<Address> addresses = null;
+        List<Address> addresses;
         Geocoder geo = new Geocoder(this.mContext, Locale.getDefault());
 
         try {
@@ -348,17 +347,17 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Get distance between two literal addresses
-     * @param adressSource address of source
-     * @param adressCible address of target
+     * @param addressSource address of source
+     * @param addressCible address of target
      * @return double
      */
-    public double getDistanceEntreDeuxAdresse(String adressSource, String adressCible){
+    public double getDistanceEntreDeuxAdresse(String addressSource, String addressCible){
         Location locationA = new Location("point A");
-        locationA.setLatitude(getLatitudeFromAddress(adressSource));
-        locationA.setLongitude(getLongitudeFromAddress(adressSource));
+        locationA.setLatitude(getLatitudeFromAddress(addressSource));
+        locationA.setLongitude(getLongitudeFromAddress(addressSource));
         Location locationB = new Location("point B");
-        locationB.setLatitude(getLatitudeFromAddress(adressCible));
-        locationB.setLongitude(getLongitudeFromAddress(adressCible));
+        locationB.setLatitude(getLatitudeFromAddress(addressCible));
+        locationB.setLongitude(getLongitudeFromAddress(addressCible));
         float distance=locationA.distanceTo(locationB);
         return distance;
     }

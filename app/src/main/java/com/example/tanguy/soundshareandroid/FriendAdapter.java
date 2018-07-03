@@ -12,6 +12,9 @@ import com.example.tanguy.soundshareandroid.models.Friend;
 
 import java.util.List;
 
+/**
+ * Class for arranging friends in scrollable rows
+ */
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
     private List<Friend> mData;
@@ -44,7 +47,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         return mData.size();
     }
 
-
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextViewUsername;
@@ -53,7 +55,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         ViewHolder(View itemView) {
             super(itemView);
             myTextViewUsername = itemView.findViewById(R.id.tvUsername);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.deleteButton);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
             deleteButton.setOnClickListener(this);
         }
 
@@ -69,8 +71,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
-
-
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {

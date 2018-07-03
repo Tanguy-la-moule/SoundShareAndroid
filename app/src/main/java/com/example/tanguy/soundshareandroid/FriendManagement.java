@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.tanguy.soundshareandroid.models.Friend;
+import com.example.tanguy.soundshareandroid.tools.database.Deleter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class for managing friends (add, remove, ...)
+ */
 public class FriendManagement extends AppCompatActivity {
     public Friend user;
     public Friend friend;
@@ -38,7 +42,7 @@ public class FriendManagement extends AppCompatActivity {
     FriendAdapter adapter;
 
     public FriendManagement(){
-        this.friendList = new ArrayList<Friend>();
+        this.friendList = new ArrayList<>();
     }
 
     @Override
@@ -85,6 +89,7 @@ public class FriendManagement extends AppCompatActivity {
                                     public void onItemClick(View view, int position) {
 
                                         final Friend friend = friendList.get(position);
+                                        final Deleter deleter = new Deleter();
 
                                         new android.support.v7.app.AlertDialog.Builder(currentContext)
                                                 .setIcon(R.drawable.ic_delete_white)
@@ -96,34 +101,8 @@ public class FriendManagement extends AppCompatActivity {
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         Log.e("DELETE", "delete" + friend.getUsername());
                                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                                        db.collection("users").document(userID).collection("friends").document(friend.getID())
-                                                                .delete()
-                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void aVoid) {
-                                                                        Log.e("DELETE FRIEND", "friend deleted from your side");
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.w("DELETE FRIEND", "Error deleting document", e);
-                                                                    }
-                                                                });
-                                                        db.collection("users").document(friend.getID()).collection("friends").document(userID)
-                                                                .delete()
-                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void aVoid) {
-                                                                        Log.e("DELETE FRIEND", "friend deleted on his side");
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.w("DELETE FRIEND", "Error deleting document", e);
-                                                                    }
-                                                                });
+                                                        deleter.delete(db, "users", userID, "friends", friend.getID(), "from your");
+                                                        deleter.delete(db, "users", friend.getID(), "friends", userID, "on his");
                                                         for(int i = 0; i < friendList.size(); i++){
                                                             if(friendList.get(i).getID() == friend.getID()){
                                                                 friendList.remove(i);
