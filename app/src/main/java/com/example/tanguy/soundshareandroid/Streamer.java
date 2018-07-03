@@ -386,7 +386,7 @@ public class Streamer extends AppCompatActivity {
         cancelNotification(getBaseContext());
         notificationCall(this.nextTitle, this.nextArtist);
 
-        playOrPause = (ImageButton) findViewById(R.id.audioStreamBtn);
+        playOrPause = findViewById(R.id.audioStreamBtn);
 
         this.mediaPlayer = new MediaPlayer();
         this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.example.tanguy.soundshareandroid.models.GPSTracker;
 import com.example.tanguy.soundshareandroid.models.Playlist;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -95,6 +96,26 @@ public class Home extends AppCompatActivity {
                             } else {
                                 Log.e("ERROR", "error getting playlists" + task.getException());
                             }
+                        }
+                    });
+            GPSTracker gps = new GPSTracker(this);
+            Map<String, Object> pos = new HashMap<>();
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            pos.put("latitude", latitude);
+            pos.put("longitude", longitude);
+            db.collection("users").document(userID).collection("position").document("position")
+                    .set(pos)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("LOCATION", "Position successfully added");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("LOCATION", "Error writing document", e);
                         }
                     });
         }

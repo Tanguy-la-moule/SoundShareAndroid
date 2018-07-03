@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,7 +121,42 @@ public class FriendManagement extends AppCompatActivity {
                                 });
                                 recyclerView.setAdapter(adapter);
                             } else {
-                                Log.e("ERROR", "error getting playlists" + task.getException());
+                                Log.e("ERROR", "error getting friends" + task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
+    public void getFriends(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            final String userID = currentUser.getUid();
+
+            // Get the list of user's friends from database
+            db.collection("users").document(userID).collection("friends")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Map<String, Object> friendJson = document.getData();
+
+                                    String ID = document.getId();
+                                    String username = (String) friendJson.get("username");
+                                    String email = (String) friendJson.get("email");
+                                    Friend friend = new Friend(ID, email, username);
+                                    friendList.add(friend);
+                                }
+                            } else {
+                                Log.e("ERROR", "error getting friends" + task.getException());
                             }
                         }
                     });
@@ -288,5 +324,13 @@ public class FriendManagement extends AppCompatActivity {
     public void goToMap(View view){
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    public ArrayList<Friend> getFriendList() {
+        return friendList;
+    }
+
+    public void setFriendList(ArrayList<Friend> friendList) {
+        this.friendList = friendList;
     }
 }

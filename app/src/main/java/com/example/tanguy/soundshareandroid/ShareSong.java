@@ -1,10 +1,9 @@
 package com.example.tanguy.soundshareandroid;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,8 +12,6 @@ import android.view.View;
 import com.example.tanguy.soundshareandroid.models.Friend;
 import com.example.tanguy.soundshareandroid.models.GPSTracker;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,7 +30,7 @@ public class ShareSong extends AppCompatActivity {
     private GPSTracker tracker;
 
     public ShareSong(){
-        this.friendList = new ArrayList<Friend>();
+        this.friendList = new ArrayList<>();
         this.tracker = new GPSTracker(this);
     }
 
