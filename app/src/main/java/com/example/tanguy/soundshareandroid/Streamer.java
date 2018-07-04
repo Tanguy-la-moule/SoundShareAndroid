@@ -171,8 +171,6 @@ public class Streamer extends AppCompatActivity {
             this.mediaPlayer.reset();
             this.progressDialog = new ProgressDialog(this);
             new Player().execute(storageID);
-
-
         }
     }
 
@@ -183,7 +181,6 @@ public class Streamer extends AppCompatActivity {
         final Context currentContext = this;
         final String finalSongID = this.orderedPlaylist.get(this.lectureNb);
         final String finalPlaylistID = this.playlistID;
-
 
         new android.support.v7.app.AlertDialog.Builder(currentContext)
                 .setIcon(R.drawable.ic_delete_white)
@@ -232,10 +229,6 @@ public class Streamer extends AppCompatActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
-
-
-
-
     }
 
 
@@ -345,8 +338,6 @@ public class Streamer extends AppCompatActivity {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notificationBuilder.build());
-
-
     }
 
     public static void cancelNotification(Context context) {
@@ -382,6 +373,31 @@ public class Streamer extends AppCompatActivity {
         tvTitle.setText(this.nextTitle);
         tvArtist.setText(this.nextArtist);
         Picasso.with(this).load(this.nextCoverURL).resize(650, 650).into(ivCover);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        String userID = firebaseAuth.getCurrentUser().getUid();
+
+        Map<String, Object> nextSong = new HashMap<>();
+        nextSong.put("TITLE", this.nextTitle);
+        nextSong.put("ARTIST", this.nextArtist);
+        nextSong.put("STORAGEID", this.nextStorageID);
+        nextSong.put("COVERURL", this.nextCoverURL);
+
+        db.collection("users").document(userID).collection("marker").document("last song")
+                .set(nextSong)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("LAST SONG", "Last song successfully added");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("LAST SONG", "Error writing document", e);
+                    }
+                });
 
         cancelNotification(getBaseContext());
         notificationCall(this.nextTitle, this.nextArtist);
@@ -422,10 +438,8 @@ public class Streamer extends AppCompatActivity {
             this.lectureNb = this.lectureNb + 1;
         }
 
-        nextSongButton = (ImageButton) findViewById(R.id.ibNextSong);
+        nextSongButton = findViewById(R.id.ibNextSong);
         nextSongButton.setOnClickListener(null);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("songs").document(orderedPlaylist.get(lectureNb))
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

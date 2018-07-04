@@ -25,6 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PlaylistDisplay extends AppCompatActivity {
@@ -130,11 +131,17 @@ public class PlaylistDisplay extends AppCompatActivity {
 
     }
 
-    public void goToStreamer(View view, int position, String playlistName, String playlistID, String songID, String title, String artist, String storageID, String coverURL, ArrayList<String> playlistSongID){
+    public void goToStreamer(View view, int position, String playlistName, String playlistID,
+                             String songID, String title, String artist, String storageID,
+                             String coverURL, ArrayList<String> playlistSongID){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        String userID = firebaseAuth.getCurrentUser().getUid();
+
         Log.e("RANDOM", playlistSongID.toString());
 
         playlistSongID.remove(position);
-        ArrayList<String> orderedPlaylist = new ArrayList<String>();
+        ArrayList<String> orderedPlaylist = new ArrayList<>();
         orderedPlaylist.add(songID);
         while(playlistSongID.size() > 0){
             int rand = (int) Math.random() * (playlistSongID.size() - 1);
@@ -155,6 +162,28 @@ public class PlaylistDisplay extends AppCompatActivity {
         bundle.putString("COVERURL", coverURL);
         bundle.putString("PLAYLISTID", playlistID);
         bundle.putStringArrayList("SONGSID", orderedPlaylist);
+
+        Map<String, Object> last_song = new HashMap<>();
+        last_song.put("TITLE", title);
+        last_song.put("ARTIST", artist);
+        last_song.put("STORAGEID", storageID);
+        last_song.put("COVERURL", coverURL);
+
+        db.collection("users").document(userID).collection("marker").document("last song")
+                .set(last_song)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("LAST SONG", "Last song successfully added");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("LAST SONG", "Error writing document", e);
+                    }
+                });
+
         intent.putExtras(bundle);
         intent.putExtra("LECTURENB", 0);
         startActivity(intent);

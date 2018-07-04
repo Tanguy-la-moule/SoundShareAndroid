@@ -104,7 +104,7 @@ public class Home extends AppCompatActivity {
             double longitude = gps.getLongitude();
             pos.put("latitude", latitude);
             pos.put("longitude", longitude);
-            db.collection("users").document(userID).collection("position").document("position")
+            db.collection("users").document(userID).collection("marker").document("position")
                     .set(pos)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
