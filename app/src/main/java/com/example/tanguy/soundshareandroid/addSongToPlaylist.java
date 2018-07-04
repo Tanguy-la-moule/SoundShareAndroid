@@ -85,7 +85,6 @@ public class addSongToPlaylist extends AppCompatActivity {
                                     if (!isIn(song.getSongID(), playlistSongs)) {
                                         songList.add(song);
                                     }
-
                                 }
 
                                 Log.d("SONG REQUEST", "playlist pulled successfully");
@@ -120,8 +119,6 @@ public class addSongToPlaylist extends AppCompatActivity {
                                                                 db.collection("users").document(userID).collection("playlists").document(playlistID).set(newPlaylist);
                                                                 Log.e("ADD SONG", "song added to the playlist");
 
-                                                                Log.e("TEST", songsID.toString());
-
                                                                 goToPlaylistDisplay2(currentView, songsID);
                                                             } else {
                                                                 Log.d("ADD SONG", "No such playlistID");
@@ -134,7 +131,6 @@ public class addSongToPlaylist extends AppCompatActivity {
                                             }
                                         });
                                 recyclerView.setAdapter(adapter);
-
                             } else {
                                 Log.w("SONG REQUEST", "Error getting documents.", task.getException());
                             }

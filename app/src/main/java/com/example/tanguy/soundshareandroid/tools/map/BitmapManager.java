@@ -8,10 +8,18 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Tool for managing Bitmap objects
+ */
 public class BitmapManager {
 
     public BitmapManager(){}
 
+    /**
+     * Get Bitmap object from a URL of a file
+     * @param src URL of the image
+     * @return Bitmap
+     */
     public static Bitmap getBitmapFromURL(String src) {
         try {
             URL url = new URL(src);

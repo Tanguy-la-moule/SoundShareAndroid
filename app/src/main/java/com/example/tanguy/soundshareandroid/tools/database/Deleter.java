@@ -7,11 +7,23 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Tool for deleting documents in the database
+ */
 public class Deleter {
 
     public Deleter(){
     }
 
+    /**
+     * Delete a document from the database at a certain deepness
+     * @param db database
+     * @param root_collection root collection
+     * @param ID_1 root document
+     * @param second_collection category
+     * @param ID_2 target document
+     * @param message ..
+     */
     public void delete(FirebaseFirestore db, String root_collection, String ID_1, String second_collection, String ID_2, final String message){
         db.collection(root_collection)
                 .document(ID_1)

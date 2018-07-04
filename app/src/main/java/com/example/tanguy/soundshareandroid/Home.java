@@ -41,7 +41,7 @@ public class Home extends AppCompatActivity {
     private ArrayList<Playlist> playlistList;
 
     public Home() {
-        this.playlistList = new ArrayList<Playlist>();
+        this.playlistList = new ArrayList<>();
     }
 
 
@@ -121,12 +121,16 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    /**
+     * For creating playlists
+     * @param view current view
+     */
     public void createPlaylist(View view){
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        final EditText editPlaylistName = (EditText) findViewById(R.id.playlistName);
+        final EditText editPlaylistName = findViewById(R.id.playlistName);
         final String newPlaylistName = editPlaylistName.getText().toString();
         if(newPlaylistName.length() > 5){
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -202,6 +206,10 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * For going to the map
+     * @param view Current view
+     */
     public void goToMap(View view){
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);

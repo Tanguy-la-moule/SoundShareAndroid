@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class for displaying playlists
+ */
 public class PlaylistDisplay extends AppCompatActivity {
 
     private SongAdapter adapter;
@@ -37,7 +40,7 @@ public class PlaylistDisplay extends AppCompatActivity {
     private ArrayList<SongInPlaylist> songList;
 
     public PlaylistDisplay(){
-        this.songList = new ArrayList<SongInPlaylist>();
+        this.songList = new ArrayList<>();
     }
 
     @Override
@@ -64,6 +67,7 @@ public class PlaylistDisplay extends AppCompatActivity {
             this.userID = currentUser.getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            // Get song data
             db.collection("songs")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -109,6 +113,7 @@ public class PlaylistDisplay extends AppCompatActivity {
 
         }
     }
+
     public Boolean isIn(String ID, ArrayList<String> listID){
         Boolean found = false;
         for(int i = 0; i < listID.size(); i++){
@@ -126,7 +131,7 @@ public class PlaylistDisplay extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
+        ImageButton backButton = findViewById(R.id.backButton);
         backButton.performClick();
 
     }
@@ -144,7 +149,7 @@ public class PlaylistDisplay extends AppCompatActivity {
         ArrayList<String> orderedPlaylist = new ArrayList<>();
         orderedPlaylist.add(songID);
         while(playlistSongID.size() > 0){
-            int rand = (int) Math.random() * (playlistSongID.size() - 1);
+            int rand = (int) (Math.random() * (playlistSongID.size() - 1));
             String temporary = playlistSongID.get(rand);
             playlistSongID.remove(rand);
             orderedPlaylist.add(temporary);
@@ -190,7 +195,7 @@ public class PlaylistDisplay extends AppCompatActivity {
     }
 
     public ArrayList<String> convertSongToString(ArrayList<SongInPlaylist> songList){
-        ArrayList<String> songIdList = new ArrayList<String>();
+        ArrayList<String> songIdList = new ArrayList<>();
         for(int i = 0; i < songList.size(); i++){
             songIdList.add(songList.get(i).getSongID());
         }
@@ -217,7 +222,7 @@ public class PlaylistDisplay extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Log.e("DELETE PLAYLIST", "playlist deleted from firestore");
-                                        ImageButton previousButton = (ImageButton) findViewById(R.id.backButton);
+                                        ImageButton previousButton = findViewById(R.id.backButton);
                                         previousButton.performClick();
                                     }
                                 })

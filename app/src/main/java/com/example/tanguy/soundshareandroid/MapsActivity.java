@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import com.example.tanguy.soundshareandroid.models.Friend;
 import com.example.tanguy.soundshareandroid.models.GPSTracker;
-import com.example.tanguy.soundshareandroid.tools.map.AsyncTaskLoadImage;
-import com.example.tanguy.soundshareandroid.tools.map.BitmapManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,9 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
@@ -72,11 +67,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Bitmap b=bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
             mMap.addMarker(new MarkerOptions().position(mpos).title("I'm here !").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-//            float zoomLevel = 16.0f;
-//            Map<String, Object> positionsFriends = this.getPositionsFriends();
-//            Map<String, Object> pos = new HashMap<>();
-//            final ArrayList<Double> lat = new ArrayList<>();
-//            final ArrayList<Double> lon = new ArrayList<>();
 
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -107,27 +97,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         final String friendID = fr.getID();
                                         final String username = fr.getUsername();
 
+                                        // Get friend's last song's info
                                         db.collection("users").document(friendID).collection("marker").document("last song")
                                                 .get()
                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                         String title;
-//                                                        String artist;
+                                                        String artist;
                                                         final String coverurl;
-//                                                        String storageID;
+                                                        String storageID;
                                                         Bitmap icon;
                                                         if (task.isSuccessful()){
                                                             DocumentSnapshot document = task.getResult();
                                                             if(document.exists()){
                                                                 Map<String, Object> songJson = document.getData();
                                                                 title = (String) songJson.get("TITLE");
-                                                                Log.e("TEST2", title);
-//                                                                artist = (String) songJson.get("ARTIST");
+                                                                artist = (String) songJson.get("ARTIST");
                                                                 coverurl = (String) songJson.get("COVERURL");
-//                                                                storageID = (String) songJson.get("STORAGEID");
-//                                                                icon = BitmapManager.getBitmapFromURL(coverurl);
+                                                                storageID = (String) songJson.get("STORAGEID");
 
+                                                                //Using a thread to add a marker after image loaded (asynchro)
                                                                 Thread thread = new Thread(new Runnable(){
                                                                     @Override
                                                                     public void run(){
@@ -140,6 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                             e.printStackTrace();
                                                                         }
                                                                         final Bitmap finalBitmap = bitmap;
+
                                                                         runOnUiThread(new Runnable() {
                                                                             @Override
                                                                             public void run() {
@@ -148,6 +139,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 assert finalBitmap != null;
                                                                                 Bitmap icon = Bitmap.createScaledBitmap(finalBitmap, width, height, false);
                                                                                 final Bitmap finalIcon = icon;
+
+                                                                                //Get friend's location
                                                                                 db.collection("users").document(friendID).collection("marker")
                                                                                         .document("position")
                                                                                         .get()
@@ -156,16 +149,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                             @Override
                                                                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                                                 if (task.isSuccessful()){
-                                                                                                    Log.e("TEST4", "QQN");
                                                                                                     DocumentSnapshot document = task.getResult();
                                                                                                     if (document.exists()){
                                                                                                         Map<String, Object> positionJson = document.getData();
                                                                                                         double lat = (double) positionJson.get("latitude");
                                                                                                         double lon = (double) positionJson.get("longitude");
-                                                                                                        Log.e("TEST5", "QQN" + lat);
                                                                                                         position = new LatLng(lat, lon);
                                                                                                         mMap.addMarker(new MarkerOptions().position(position).title(username).icon(BitmapDescriptorFactory.fromBitmap(finalIcon)));
-                                                                                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mpos));
+//                                                                                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mpos));
+                                                                                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mpos,16.0f));
                                                                                                         Toast.makeText(getApplicationContext(), "Votre position est  \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
                                                                                                     }
                                                                                                 }
@@ -182,58 +174,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                     }
                                                                 });
                                                                 thread.start();
-
-//////                                                                try {
-//////                                                                    URL url = new URL(coverurl);
-////////                                                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-////////                                                                    connection.setRequestMethod("GET");
-////////                                                                    connection.setReadTimeout(15*1000);
-////////                                                                    connection.setDoInput(true);
-//////
-//////                                                                    icon = BitmapFactory.decodeStream((InputStream)url.getContent());
-//////
-////////                                                                    connection.connect();
-//////                                                                    Log.e("TEST3e", "ok");
-////////                                                                    InputStream input = connection.getInputStream();
-//////                                                                    Log.e("TEST3f", "ok");
-////////                                                                    icon = BitmapFactory.decodeStream(input);
-//////                                                                    int height = 100;
-//////                                                                    int width = 100;
-//////                                                                    assert icon != null;
-//////                                                                    icon = Bitmap.createScaledBitmap(icon, width, height, false);
-//////                                                                    final Bitmap finalIcon = icon;
-//////                                                                    db.collection("users").document(friendID).collection("marker")
-//////                                                                            .document("position")
-//////                                                                            .get()
-//////                                                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//////                                                                                LatLng position = null;
-//////                                                                                @Override
-//////                                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//////                                                                                    if (task.isSuccessful()){
-//////                                                                                        Log.e("TEST4", "QQN");
-//////                                                                                        DocumentSnapshot document = task.getResult();
-//////                                                                                        if (document.exists()){
-//////                                                                                            Map<String, Object> positionJson = document.getData();
-//////                                                                                            double lat = (double) positionJson.get("latitude");
-//////                                                                                            double lon = (double) positionJson.get("longitude");
-//////                                                                                            Log.e("TEST5", "QQN" + lat);
-//////                                                                                            position = new LatLng(lat, lon);
-//////                                                                                            mMap.addMarker(new MarkerOptions().position(position).title(username).icon(BitmapDescriptorFactory.fromBitmap(finalIcon)));
-//////                                                                                            mMap.moveCamera(CameraUpdateFactory.newLatLng(mpos));
-//////                                                                                            Toast.makeText(getApplicationContext(), "Votre position est  \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-//////                                                                                        }
-//////                                                                                    }
-//////                                                                                }
-//////                                                                            })
-//////                                                                            .addOnFailureListener(new OnFailureListener() {
-//////                                                                                @Override
-//////                                                                                public void onFailure(@NonNull Exception e) {
-//////                                                                                    Log.w("ERROR", "FAILURE MARKER", e);
-//////                                                                                }
-//////                                                                            });
-////                                                                } catch (IOException e) {
-////                                                                    Log.e("ERROREXCEPTION", "AU SECOURS");
-//                                                                }
                                                             }
                                                         }
                                                     }
@@ -243,65 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     public void onFailure(@NonNull Exception e) {
                                                         Log.w("ERROR", "FAILURE LAST SONG", e);
                                                     }
-                                                })
-                                        ;
-
-//                                        db.collection("users").document(friendID).collection("marker").get()
-//                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                                                    @Override
-//                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                                        LatLng position = null;
-//                                                        String title;
-//                                                        String artist;
-//                                                        String coverurl = null;
-//                                                        String storageID;
-//                                                        BitmapManager bitmapManager = new BitmapManager();
-//                                                        Bitmap icon = null;
-//                                                        if (task.isSuccessful()){
-//                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                                                if (document.getId() == "last song"){
-//                                                                    Map<String, Object> songJson = document.getData();
-//                                                                    title = (String) songJson.get("TITLE");
-//                                                                    artist = (String) songJson.get("ARTIST");
-//                                                                    coverurl = (String) songJson.get("COVERURL");
-//                                                                    storageID = (String) songJson.get("STORAGEID");
-//                                                                    icon = bitmapManager.getBitmapFromURL(coverurl);
-//                                                                    int height = 100;
-//                                                                    int width = 100;
-//                                                                    icon = Bitmap.createScaledBitmap(icon, width, height, false);
-//                                                                } else {
-//                                                                    Map<String, Object> positionJson = document.getData();
-//                                                                    double lat = (double) positionJson.get("latitude");
-//                                                                    double lon = (double) positionJson.get("longitude");
-//                                                                    position = new LatLng(lat, lon);
-//                                                                    mMap.addMarker(new MarkerOptions().position(position).title(username).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-//                                                                }
-//                                                            }
-//                                                            Log.e("ADD MARKERS", "Succeeded");
-//                                                        } else {
-//                                                            Log.e("ERROR", "error adding markers" + task.getException());
-//                                                        }
-//                                                    }
-//                                                });
-
-//                                        db.collection("users").document(friendID).collection("marker").document("position")
-//                                                .get()
-//                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                                    @Override
-//                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                                        if(task.isSuccessful()){
-//                                                            DocumentSnapshot document = task.getResult();
-//                                                            Map<String, Object> positionJson = document.getData();
-//                                                            double lat = (double) positionJson.get("latitude");
-//                                                            double lon = (double) positionJson.get("longitude");
-//                                                            LatLng position = new LatLng(lat, lon);
-//                                                            mMap.addMarker(new MarkerOptions().position(position).title(username));
-//                                                            Log.e("GET LOCATIONS", "Succeeded");
-//                                                        } else {
-//                                                            Log.e("ERROR", "error getting positions" + task.getException());
-//                                                        }
-//                                                    }
-//                                                });
+                                                });
                                     }
                                 } else {
                                     Log.e("ERROR", "error getting friends" + task.getException());

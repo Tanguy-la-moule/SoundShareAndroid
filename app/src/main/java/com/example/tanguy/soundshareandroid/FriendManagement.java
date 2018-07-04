@@ -3,10 +3,9 @@ package com.example.tanguy.soundshareandroid;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +89,7 @@ public class FriendManagement extends AppCompatActivity {
 
                                         final Friend friend = friendList.get(position);
                                         final Deleter deleter = new Deleter();
-
+                                        // For deleting friends
                                         new android.support.v7.app.AlertDialog.Builder(currentContext)
                                                 .setIcon(R.drawable.ic_delete_white)
                                                 .setTitle("Delete friend")
@@ -128,6 +126,9 @@ public class FriendManagement extends AppCompatActivity {
         }
     }
 
+    /**
+     * For getting all user's friends
+     */
     public void getFriends(){
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -182,13 +183,17 @@ public class FriendManagement extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * For checking whether the user can an email
+     * @param view Current view
+     */
     public void checkFriendEmail(View view){
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-        EditText editTextEmail = (EditText) findViewById(R.id.etNewFriend);
+        EditText editTextEmail = findViewById(R.id.etNewFriend);
 
-        final String friendEmail = (String) editTextEmail.getText().toString();
+        final String friendEmail = editTextEmail.getText().toString();
 
         Log.e("EMAIL", friendEmail);
 
@@ -228,6 +233,11 @@ public class FriendManagement extends AppCompatActivity {
                     }});
     }
 
+    /**
+     * For adding a friend
+     * @param userID current user's ID
+     * @param friendEmail friend's email
+     */
     public void addFriend(String userID, final String friendEmail){
         final String finalUserID = userID;
         final String finalFriendEmail = friendEmail;

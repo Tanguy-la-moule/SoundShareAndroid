@@ -88,7 +88,6 @@ public class ShareSong extends AppCompatActivity {
                                         }
                                     }
                                 });
-
                                 recyclerView.setAdapter(adapter);
                             }
                         }
